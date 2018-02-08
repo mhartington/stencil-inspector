@@ -1,0 +1,109 @@
+{
+  "components": [
+    {
+      "tag": "sti-debug-group",
+      "dependencies": [
+        "sti-property-view"
+      ],
+      "componentClass": "StiDebugGroup",
+      "componentPath": "components/sti-debug-group/sti-debug-group.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/sti-debug-group/sti-debug-group.scss"
+          ]
+        }
+      },
+      "props": [
+        {
+          "name": "category",
+          "type": "String"
+        },
+        {
+          "name": "heading",
+          "type": "String"
+        },
+        {
+          "name": "info"
+        },
+        {
+          "name": "items"
+        }
+      ]
+    },
+    {
+      "tag": "sti-logo",
+      "dependencies": [],
+      "componentClass": "StiLogo",
+      "componentPath": "components/sti-logo/sti-logo.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/sti-logo/sti-logo.scss"
+          ]
+        }
+      }
+    },
+    {
+      "tag": "sti-main",
+      "dependencies": [
+        "sti-debug-group",
+        "sti-logo"
+      ],
+      "componentClass": "StiMain",
+      "componentPath": "components/sti-main/sti-main.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/sti-main/reset.css",
+            "components/sti-main/sti-main.scss"
+          ]
+        }
+      },
+      "states": [
+        {
+          "name": "debugInfo"
+        },
+        {
+          "name": "isDarkTheme"
+        }
+      ]
+    },
+    {
+      "tag": "sti-property-view",
+      "dependencies": [
+        "sti-property-view"
+      ],
+      "componentClass": "StiPropertyView",
+      "componentPath": "components/sti-property-view/sti-property-view.js",
+      "styles": {
+        "$": {
+          "stylePaths": [
+            "components/sti-property-view/sti-property-view.scss"
+          ]
+        }
+      },
+      "props": [
+        {
+          "name": "item",
+          "watch": [
+            "itemChangeHandler"
+          ]
+        }
+      ],
+      "states": [
+        {
+          "name": "expandedValue"
+        },
+        {
+          "name": "isExpanded"
+        }
+      ]
+    }
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "0.4.0-1",
+    "typescriptVersion": "2.7.1"
+  }
+}

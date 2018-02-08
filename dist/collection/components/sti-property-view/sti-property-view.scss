@@ -1,0 +1,116 @@
+sti-property-view {
+  margin-top: 2px;
+  display: block;
+
+  & .arrow {
+    font-size: 10px;
+    color: rgb(105, 105, 105);
+    cursor: default;
+
+    & .right {
+      margin-right: 1px;
+    }
+  }
+
+  & .property-line {
+    white-space: nowrap;
+  }
+
+  & .property-name {
+    font-size: 12px;
+    color: rgb(128, 0, 128);
+    font-family: monospace;
+    margin-left: 1px;
+  }
+
+  & .value-container {
+    position: relative;
+  }
+
+  & .property-editor {
+    font-family: monospace;
+    font-size: 12px;
+    margin: 0;
+    height: 12px;
+    outline: none;
+    border: 1px solid rgb(169, 169, 169);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 4px;
+    left: 2px;
+    padding: 0 0 0 2px;
+  }
+
+  & .property-value,
+  & .token-colon {
+    font-size: 12px;
+    color: rgb(105, 105, 105);
+    font-family: monospace;
+  }
+
+  & .property-value {
+    &.null,
+    &.undefined  {
+      color: rgb(105, 105, 105);
+    }
+
+    &.boolean {
+      color: rgb(255, 20, 147);
+    }
+
+    &.string {
+      color: rgb(255, 0, 0);
+      white-space: nowrap;
+    }
+
+    &.number {
+      color: rgb(0, 0, 255);
+    }
+
+    &.array {
+      color: rgb(0, 0, 0);
+    }
+
+    &.object,
+    &.node {
+      color: rgb(0, 0, 0);
+    }
+
+    &.node {
+      color: rgb(203, 203, 203);
+    }
+  }
+
+  & ul.properties {
+    margin-left: 16px;
+  }
+
+  & .no-properties {
+    margin-top: 4px;
+    font-size: 10px;
+  }
+}
+
+.dark property-view .property-name {
+  color: rgb(52, 199, 187);
+}
+
+.dark property-view .property-value.string {
+  color: rgb(203, 203, 203);
+}
+
+.dark property-view .property-value.number {
+  color: rgb(89, 166, 202);
+}
+
+.dark property-view .property-value.array {
+  color: rgb(203, 203, 203);
+}
+
+.dark property-view .property-value.object {
+  color: rgb(203, 203, 203);
+}
+
+.dark property-view .no-properties {
+  color: rgb(152, 152, 152);
+}

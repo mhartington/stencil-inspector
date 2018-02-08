@@ -1,0 +1,46 @@
+{
+  "name": "stencil-inspector",
+  "version": "0.0.1",
+  "description": "A Chrome plugin that adds a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.",
+  "keywords": [
+    "stencil",
+    "chrome",
+    "debug",
+    "plugin"
+  ],
+  "homepage": "https://github.com/bfmatei/stencil-inspector",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bfmatei/stencil-inspector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bfmatei/stencil-inspector/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Bogdan Matei",
+    "email": "contact@bmatei.com",
+    "homepage": "https://github.com/bfmatei"
+  },
+  "scripts": {
+    "dev": "stencil build --dev --watch",
+    "build": "stencil build",
+    "lint": "sd concurrent \"npm run lint:ts\" \"npm run lint:styles\"",
+    "lint:ts": "tslint -p tsconfig.json -c tslint.json",
+    "lint:styles": "stylelint \"src/**/*.{css,scss,less,pcss}\" --cache --cache-location \"./.stylelint-cache\""
+  },
+  "dependencies": {
+    "@stencil/core": "0.4.0-1"
+  },
+  "devDependencies": {
+    "@stencil/utils": "0.0.4",
+    "@types/chrome": "0.0.59",
+    "stylelint": "8.4.0",
+    "tslint": "5.9.1",
+    "tslint-language-service": "0.9.8",
+    "tslint-react": "3.4.0"
+  },
+  "main": "dist/sti.js",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json"
+}

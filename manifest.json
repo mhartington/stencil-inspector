@@ -1,0 +1,12 @@
+{
+  "manifest_version": 2,
+  "name": "Stencil Inspector",
+  "version": "0.0.1",
+  "description": "A Chrome plugin adding a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.",
+  "devtools_page": "devtools.html",
+  "icons": {
+    "16": "images/stencil-logo-16x16.png",
+    "48": "images/stencil-logo-48x48.png",
+    "128": "images/stencil-logo-128x128.png"
+  }
+}

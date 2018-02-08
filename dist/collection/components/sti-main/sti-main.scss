@@ -1,0 +1,53 @@
+sti-main {
+  & .app-header {
+    background: rgb(244, 244, 244);
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & .logo-badge {
+    margin-left: 5px;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -1px;
+    color: rgb(22, 22, 29);
+  }
+
+  & .not-found {
+    font-style: italic;
+    font-size: 10px;
+  }
+
+  & .custom-attribute {
+    margin-bottom: 4px;
+
+    & .attribute-name {
+      color: rgb(139, 69, 19);
+    }
+
+    & .block-token {
+      color: rgb(128, 128, 128);
+    }
+
+    & .attribute-name,
+    & .block-token {
+      font-size: 12px;
+      display: inline;
+      font-family: monospace;
+    }
+  }
+}
+
+.dark .app-header {
+  background: rgb(42, 42, 42);
+}
+
+.dark .not-found {
+  color: rgb(152, 152, 152);
+}
+
+.dark .custom-attribute .attribute-name {
+  color: rgb(239, 149, 101);
+}
