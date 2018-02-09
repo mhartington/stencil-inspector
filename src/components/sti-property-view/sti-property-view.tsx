@@ -5,12 +5,14 @@ import {
   Watch
 } from '@stencil/core';
 
-import autobind from '../../decorators/autobind';
+import autobind from '~decorators/autobind';
 import {
-  ComponentDebugEntry,
-  ComponentDebugInfo,
   StiInjector
-} from '../../helpers/injector';
+} from '~helpers/injector';
+import {
+  StiEntry,
+  StiGroup
+} from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-property-view',
@@ -18,13 +20,16 @@ import {
 })
 export class StiPropertyView {
   @Prop()
-  public item: ComponentDebugEntry = null;
+  public item: StiEntry = null;
+
+  @Prop()
+  public darkTheme: boolean = false;
 
   @State()
   private isExpanded: boolean = false;
 
   @State()
-  private expandedValue: ComponentDebugInfo = null;
+  private expandedValue: StiGroup = null;
 
   @Watch('item')
   protected itemChangeHandler(): void {
@@ -33,8 +38,16 @@ export class StiPropertyView {
     this.expandedValue = null;
   }
 
+  protected hostData(): JSXElements.StiPropertyViewAttributes {
+    return {
+      class: {
+        darkTheme: this.darkTheme
+      }
+    };
+  }
+
   @autobind
-  private itemsChangeHandler(newItem: { isExpanded: boolean; expandedValue: ComponentDebugInfo }): void {
+  private itemsChangeHandler(newItem: { isExpanded: boolean; expandedValue: StiGroup }): void {
     this.isExpanded = newItem.isExpanded;
 
     this.expandedValue = newItem.expandedValue;
@@ -42,7 +55,7 @@ export class StiPropertyView {
 
   @autobind
   private arrowClickHandler(): void {
-    StiInjector.Instance.toggleDebugValueExpansion({
+    StiInjector.Instance.expandItem({
       isExpanded: this.isExpanded,
       expandedValue: this.expandedValue
     }, this.item, this.itemsChangeHandler);
@@ -60,21 +73,24 @@ export class StiPropertyView {
     );
   }
 
-  private renderChild(child: ComponentDebugEntry): JSX.Element {
+  private renderChild(child: StiEntry): JSX.Element {
     return (
       <li>
-        <sti-property-view item={child} />
+        <sti-property-view
+          item={child}
+          darkTheme={this.darkTheme}
+        />
       </li>
     );
   }
 
-  private renderChildList(isExpanded: boolean, items: ComponentDebugInfo): JSX.Element {
+  private renderChildList(isExpanded: boolean, items: StiGroup): JSX.Element {
     if (!isExpanded || !items) {
       return null;
     }
 
-    const itemsArr: ComponentDebugEntry[] = Object.keys(items)
-      .map((itemKey: string): ComponentDebugEntry => {
+    const itemsArr: StiEntry[] = Object.keys(items)
+      .map((itemKey: string): StiEntry => {
         return items[itemKey];
       });
 

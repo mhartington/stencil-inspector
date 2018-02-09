@@ -4,73 +4,32 @@ import {
   HostElement
 } from '@stencil/core/dist/declarations/component';
 
-declare var createStiDebugger: any;
+import {
+  StiEntry,
+  StiGroup,
+  StiMap
+} from './interfaces';
 
-declare global {
-  interface Window {
-    stiDebugger: any;
-  }
-}
-
-export interface ComponentDebugEntry {
-  name: string;
-  canExpand: boolean;
-  isExpanded: boolean;
-  type: string;
-  value: string;
-  expandedValue: ComponentDebugInfo;
-  debugId: number;
-}
-
-export interface ComponentDebugInfo {
-  [field: string]: ComponentDebugEntry;
-}
-
-export interface DebugInfoStatus {
-  success: boolean;
-  error: {
-    category: string;
-    message: string;
-  };
-}
-
-export interface DebugInfo {
-  info: DebugInfoStatus;
-  cmp?: ComponentDebugInfo;
-  props?: ComponentDebugInfo;
-  el?: ComponentDebugInfo;
-}
-
-createStiDebugger = function (): void {
-  // if (window.stiDebugger) {
+createStiScout = function (): void {
+  // if (window.stiScout) {
   //   return;
   // }
 
   (function (): void {
-    let nextDebugId: number = 0;
+    /** It works as an id for the cached elements */
+    let cachingIndex: number = 0;
 
-    function getNextDebugId(): number {
-      return ++nextDebugId;
+    /** Increment and return the cache index */
+    function getNextCachingIndex(): number {
+      return ++cachingIndex;
     }
 
-    /** Create an error debug info object from an error */
-    function createErrorDebugInfo(e: Error): DebugInfo {
-      return {
-        info: {
-          success: false,
-          error: {
-            category: 'general',
-            message: e.message
-          }
-        }
-      };
-    }
-
-    function getDebugPropertyKeys(obj: {}, flag: boolean = false): string[] {
+    /** Filter the properties of an object */
+    function filterKeys(obj: {}, skipUnderline: boolean = false): string[] {
       const props: string[] = [];
 
       for (const key in obj) {
-        if (key && key !== '__el' && (flag === false || !key.startsWith('_'))) {
+        if (key && key !== '__el' && (skipUnderline === false || !key.startsWith('_'))) {
           props.push(key);
         }
       }
@@ -78,71 +37,73 @@ createStiDebugger = function (): void {
       return props;
     }
 
-    window.stiDebugger = {
-      setValueOnDebugInfo(debugInfo: Partial<ComponentDebugEntry>, value: any, instance: any): DebugInfo {
+    window.stiScout = {
+      /** Create an item */
+      createStiEntry(entryPartial: Partial<StiEntry>, value: any, instance: any): StiEntry {
         try {
           let expandableValue: any;
 
           if (value instanceof Node) {
-            debugInfo.canExpand = true;
+            entryPartial.canExpand = true;
 
-            debugInfo.type = 'node';
+            entryPartial.type = 'node';
 
-            debugInfo.value = value.constructor.name;
+            entryPartial.value = value.constructor.name;
 
             expandableValue = value;
           } else if (Array.isArray(value)) {
-            debugInfo.canExpand = true;
+            entryPartial.canExpand = true;
 
-            debugInfo.type = 'array';
+            entryPartial.type = 'array';
 
-            debugInfo.value = `Array[${value.length}]`;
+            entryPartial.value = `Array[${value.length}]`;
 
             expandableValue = value;
           } else {
-            debugInfo.type = typeof value;
+            entryPartial.type = typeof value;
 
-            debugInfo.value = value;
+            entryPartial.value = value;
           }
 
           if (value === null) {
-            debugInfo.type = 'null';
+            entryPartial.type = 'null';
 
-            debugInfo.value = 'null';
+            entryPartial.value = 'null';
           } else if (value === undefined) {
-            debugInfo.type = 'undefined';
+            entryPartial.type = 'undefined';
 
-            debugInfo.value = 'undefined';
-          } else if (debugInfo.type === 'object') {
-            debugInfo.canExpand = true;
+            entryPartial.value = 'undefined';
+          } else if (entryPartial.type === 'object') {
+            entryPartial.canExpand = true;
 
             expandableValue = value;
 
-            debugInfo.value = value.constructor ? value.constructor.name : 'Object';
+            entryPartial.value = value.constructor ? value.constructor.name : 'Object';
           }
 
-          const debugId: number = debugInfo.debugId || getNextDebugId();
+          const currentCachingIndex: number = entryPartial.cachingIndex || getNextCachingIndex();
 
-          debugInfo.debugId = debugId;
+          entryPartial.cachingIndex = currentCachingIndex;
 
-          this.debugValueLookup[debugId] = {
+          this.cachingMap[cachingIndex] = {
             instance,
             expandableValue,
-            debugId
+            cachingIndex: currentCachingIndex
           };
 
-          return debugInfo as DebugInfo;
+          return entryPartial as StiEntry;
         } catch (e) {
-          return createErrorDebugInfo(e);
+          return null;
         }
       },
 
-      convertObjectToComponentDebugInfo(obj: {}): ComponentDebugInfo {
+      /** Convert an object into a group of items */
+      convertObjectToGroup(obj: {}): StiGroup {
         return Object.keys(obj)
-          .reduce((acc: DebugInfo, name: string) => {
+          .reduce((acc: StiGroup, name: string) => {
             return {
               ...acc,
-              [name]: this.setValueOnDebugInfo({
+              [name]: this.createStiEntry({
                 name
               }, obj[name], obj)
             };
@@ -150,7 +111,7 @@ createStiDebugger = function (): void {
       },
 
       /** Read the data about the current selected node */
-      getDebugInfoForNode(selectedNode: HostElement): DebugInfo {
+      initializeMap(selectedNode: HostElement): StiMap {
         try {
           const {
             $connected,
@@ -161,22 +122,19 @@ createStiDebugger = function (): void {
             _instance
           } = selectedNode;
 
-          /** Initialize DebugInfo object */
-          const debugInfo: Partial<DebugInfo> = {};
+          /** Initialize the map object */
+          const map: Partial<StiMap> = {};
 
           /** Initialize a new caching object */
-          this.debugValueLookup = {};
+          this.cachingMap = {};
 
-          this.nextDebugId = 0;
+          this.cachingIndex = 0;
 
           if (typeof $connected !== 'undefined') {
             if (typeof _instance !== 'undefined') {
-              debugInfo.info = {
+              map.info = {
                 success: true,
-                error: {
-                  category: '',
-                  message: ''
-                }
+                message: ''
               };
 
               const cmps: {} = {
@@ -187,9 +145,9 @@ createStiDebugger = function (): void {
                 queuedForUpdate: _isQueuedForUpdate
               };
 
-              debugInfo.cmp = this.convertObjectToComponentDebugInfo(cmps);
+              map.cmp = this.convertObjectToGroup(cmps);
 
-              const props: {} = getDebugPropertyKeys(_instance)
+              const props: {} = filterKeys(_instance)
                 .reduce((acc: {}, key: string): any => {
                   return {
                     ...acc,
@@ -197,9 +155,9 @@ createStiDebugger = function (): void {
                   };
                 }, {});
 
-              debugInfo.props = this.convertObjectToComponentDebugInfo(props);
+              map.props = this.convertObjectToGroup(props);
 
-              const el: {} = getDebugPropertyKeys(_instance.__el)
+              const el: {} = filterKeys(_instance.__el)
                 .reduce((acc: {}, key: string): any => {
                   return {
                     ...acc,
@@ -207,36 +165,30 @@ createStiDebugger = function (): void {
                   };
                 }, {});
 
-              debugInfo.el = this.convertObjectToComponentDebugInfo({
+              map.el = this.convertObjectToGroup({
                 el
               }, true);
             } else {
-              debugInfo.info = {
+              map.info = {
                 success: false,
-                error: {
-                  category: 'general',
-                  message: 'Stencil is running in production mode'
-                }
+                message: 'Stencil is running in production mode'
               };
             }
           } else {
-            debugInfo.info = {
+            map.info = {
               success: false,
-              error: {
-                category: 'general',
-                message: 'The element is not a Stencil component'
-              }
+              message: 'The element is not a Stencil component'
             };
           }
 
-          return debugInfo as DebugInfo;
+          return map as StiMap;
         } catch (e) {
-          return createErrorDebugInfo(e);
+          return null;
         }
       },
 
-      getExpandedDebugValueForId(id: number): ComponentDebugInfo {
-        let value: any = this.debugValueLookup[id].expandableValue;
+      getExpandedValue(id: number): StiGroup {
+        let value: any = this.cachingMap[id].expandableValue;
 
         if (Array.isArray(value)) {
           const newValue: any = {};
@@ -248,7 +200,7 @@ createStiDebugger = function (): void {
           value = newValue;
         }
 
-        value = getDebugPropertyKeys(value)
+        value = filterKeys(value)
           .reduce((acc: {}, key: string): any => {
             return {
               ...acc,
@@ -256,7 +208,7 @@ createStiDebugger = function (): void {
             };
           }, {});
 
-        return this.convertObjectToComponentDebugInfo(value);
+        return this.convertObjectToGroup(value);
       }
     };
   })();
@@ -269,20 +221,20 @@ export class StiInjector {
 
   private constructor() {
     if (chrome && chrome.devtools) {
-      const code: string = `(${createStiDebugger.toString()})(); stiDebugger.getDebugInfoForNode($0)`;
+      const code: string = `(${createStiScout.toString()})(); stiScout.initializeMap($0)`;
 
       /** Get the current selected element */
-      chrome.devtools.inspectedWindow.eval(code, (debugObject: any) => {
+      chrome.devtools.inspectedWindow.eval(code, (map: StiMap) => {
         this.registrations.forEach((registration: any) => {
-          registration(debugObject);
+          registration(map);
         });
       });
 
       /** Bind the selection change listener */
       chrome.devtools.panels.elements.onSelectionChanged.addListener(() => {
-        chrome.devtools.inspectedWindow.eval(code, (debugObject: any) => {
+        chrome.devtools.inspectedWindow.eval(code, (map: StiMap) => {
           this.registrations.forEach((registration: any) => {
-            registration(debugObject);
+            registration(map);
           });
         });
       });
@@ -297,7 +249,7 @@ export class StiInjector {
     this.registrations.push(method);
   }
 
-  public toggleDebugValueExpansion(item: any, debugInfo: ComponentDebugEntry, callback: any): void {
+  public expandItem(item: any, entry: StiEntry, callback: any): void {
     let {
       isExpanded,
       expandedValue
@@ -305,15 +257,15 @@ export class StiInjector {
 
     let waitForEval: boolean = false;
 
-    if (debugInfo.canExpand) {
+    if (entry.canExpand) {
       isExpanded = !isExpanded;
 
       if (isExpanded && !expandedValue) {
-        const code: string = `stiDebugger.getExpandedDebugValueForId(${debugInfo.debugId});`;
+        const code: string = `stiScout.getExpandedValue(${entry.cachingIndex});`;
 
         waitForEval = true;
 
-        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: ComponentDebugInfo) => {
+        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: StiGroup) => {
           expandedValue = newExpandedValue;
 
           callback({

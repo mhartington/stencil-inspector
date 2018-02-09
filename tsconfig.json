@@ -27,7 +27,18 @@
       {
         "name": "tslint-language-service"
       }
-    ]
+    ],
+    "paths": {
+      "~components/*": [
+        "src/components/*"
+      ],
+      "~decorators/*": [
+        "src/decorators/*"
+      ],
+      "~helpers/*": [
+        "src/helpers/*"
+      ]
+    }
   },
   "exclude": [
     "node_modules"

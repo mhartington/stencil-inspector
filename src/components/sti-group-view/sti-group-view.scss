@@ -1,4 +1,4 @@
-sti-debug-group {
+sti-group-view {
   & .header {
     font-weight: 400;
     font-size: 12px;
@@ -12,11 +12,13 @@ sti-debug-group {
   & .content {
     margin: 4px;
   }
-}
 
-.dark debug-group .header {
-  color: rgb(152, 152, 152);
-  background: rgb(42, 42, 42);
-  border-bottom: 1px solid rgb(92, 92, 92);
-  border-top: 1px solid rgb(61, 61, 61);
+  &.dark {
+    & .header {
+      color: rgb(152, 152, 152);
+      background: rgb(42, 42, 42);
+      border-bottom: 1px solid rgb(92, 92, 92);
+      border-top: 1px solid rgb(61, 61, 61);
+    }
+  }
 }

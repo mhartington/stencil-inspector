@@ -38,16 +38,20 @@ sti-main {
       font-family: monospace;
     }
   }
-}
 
-.dark .app-header {
-  background: rgb(42, 42, 42);
-}
+  &.dark {
+    & .app-header {
+      background: rgb(42, 42, 42);
+    }
 
-.dark .not-found {
-  color: rgb(152, 152, 152);
-}
+    & .not-found {
+      color: rgb(152, 152, 152);
+    }
 
-.dark .custom-attribute .attribute-name {
-  color: rgb(239, 149, 101);
+    & .custom-attribute {
+      & .attribute-name {
+        color: rgb(239, 149, 101);
+      }
+    }
+  }
 }

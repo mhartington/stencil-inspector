@@ -3,11 +3,13 @@ import {
   State
 } from '@stencil/core';
 
-import autobind from '../../decorators/autobind';
+import autobind from '~decorators/autobind';
 import {
-  DebugInfo,
   StiInjector
-} from '../../helpers/injector';
+} from '~helpers/injector';
+import {
+  StiMap
+} from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-main',
@@ -18,7 +20,7 @@ import {
 })
 export class StiMain {
   @State()
-  private debugInfo: DebugInfo;
+  private debugInfo: StiMap;
 
   @State()
   private isDarkTheme: boolean = false;
@@ -30,7 +32,7 @@ export class StiMain {
   }
 
   @autobind
-  private elementInfoChangeHandler(debugInfo: DebugInfo): void {
+  private elementInfoChangeHandler(debugInfo: StiMap): void {
     this.debugInfo = debugInfo;
   }
 
@@ -57,27 +59,30 @@ export class StiMain {
         </h1>
       ),
       (
-        <sti-debug-group
+        <sti-group-view
           heading='Component Info'
           category='cmp'
           items={this.debugInfo.cmp}
           info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-debug-group
+        <sti-group-view
           heading='Component Props'
           category='props'
           items={this.debugInfo.props}
           info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-debug-group
+        <sti-group-view
           heading='Element'
           category='el'
           items={this.debugInfo.el}
           info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
         />
       )
     ];

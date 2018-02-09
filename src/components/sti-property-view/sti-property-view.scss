@@ -89,28 +89,28 @@ sti-property-view {
     margin-top: 4px;
     font-size: 10px;
   }
-}
 
-.dark property-view .property-name {
-  color: rgb(52, 199, 187);
-}
+  &.dark {
+    & sti-property-view {
+      & .property-name {
+        color: rgb(52, 199, 187);
+      }
 
-.dark property-view .property-value.string {
-  color: rgb(203, 203, 203);
-}
+      & .property-value {
+        &.string,
+        &.array,
+        &.object {
+          color: rgb(203, 203, 203);
+        }
 
-.dark property-view .property-value.number {
-  color: rgb(89, 166, 202);
-}
+        &.number {
+          color: rgb(89, 166, 202);
+        }
 
-.dark property-view .property-value.array {
-  color: rgb(203, 203, 203);
-}
-
-.dark property-view .property-value.object {
-  color: rgb(203, 203, 203);
-}
-
-.dark property-view .no-properties {
-  color: rgb(152, 152, 152);
+        &.no-properties {
+          color: rgb(152, 152, 152);
+        }
+      }
+    }
+  }
 }
