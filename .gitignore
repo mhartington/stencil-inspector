@@ -1,6 +1,6 @@
 # App
 .sass-cache/
-# dist/
+dist/
 node_modules/
 src/components.d.ts
 www/
