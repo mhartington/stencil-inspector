@@ -4,8 +4,9 @@ import {
 } from '@stencil/core';
 
 import autobind from '../../decorators/autobind';
-import StiInjectorInstance, {
-  DebugInfo
+import {
+  DebugInfo,
+  StiInjector
 } from '../../helpers/injector';
 
 @Component({
@@ -22,12 +23,10 @@ export class StiMain {
   @State()
   private isDarkTheme: boolean = false;
 
-  constructor() {
-    StiInjectorInstance.register(this.elementInfoChangeHandler);
-  }
-
   protected componentWillLoad(): void {
     this.isDarkTheme = chrome && chrome.devtools && chrome.devtools.panels && (chrome.devtools.panels as any).themeName === 'dark';
+
+    StiInjector.Instance.register(this.elementInfoChangeHandler);
   }
 
   @autobind
@@ -70,6 +69,14 @@ export class StiMain {
           heading='Component Props'
           category='props'
           items={this.debugInfo.props}
+          info={this.debugInfo.info}
+        />
+      ),
+      (
+        <sti-debug-group
+          heading='Element'
+          category='el'
+          items={this.debugInfo.el}
           info={this.debugInfo.info}
         />
       )

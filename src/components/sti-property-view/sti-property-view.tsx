@@ -6,9 +6,10 @@ import {
 } from '@stencil/core';
 
 import autobind from '../../decorators/autobind';
-import StiInjectorInstance, {
+import {
   ComponentDebugEntry,
-  ComponentDebugInfo
+  ComponentDebugInfo,
+  StiInjector
 } from '../../helpers/injector';
 
 @Component({
@@ -41,7 +42,7 @@ export class StiPropertyView {
 
   @autobind
   private arrowClickHandler(): void {
-    StiInjectorInstance.toggleDebugValueExpansion({
+    StiInjector.Instance.toggleDebugValueExpansion({
       isExpanded: this.isExpanded,
       expandedValue: this.expandedValue
     }, this.item, this.itemsChangeHandler);
@@ -117,7 +118,7 @@ export class StiPropertyView {
               this.item.type === 'string' ?
                 (
                   <span class='property-value string'>
-                    &nbsp;"
+                    "
                   </span>
                 ) :
                 null

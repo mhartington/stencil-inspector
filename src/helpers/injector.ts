@@ -38,6 +38,7 @@ export interface DebugInfo {
   info: DebugInfoStatus;
   cmp?: ComponentDebugInfo;
   props?: ComponentDebugInfo;
+  el?: ComponentDebugInfo;
 }
 
 createStiDebugger = function (): void {
@@ -65,11 +66,11 @@ createStiDebugger = function (): void {
       };
     }
 
-    function getDebugPropertyKeys(obj: {}): string[] {
+    function getDebugPropertyKeys(obj: {}, flag: boolean = false): string[] {
       const props: string[] = [];
 
       for (const key in obj) {
-        if (key) {
+        if (key && key !== '__el' && (flag === false || !key.startsWith('_'))) {
           props.push(key);
         }
       }
@@ -197,6 +198,18 @@ createStiDebugger = function (): void {
                 }, {});
 
               debugInfo.props = this.convertObjectToComponentDebugInfo(props);
+
+              const el: {} = getDebugPropertyKeys(_instance.__el)
+                .reduce((acc: {}, key: string): any => {
+                  return {
+                    ...acc,
+                    [key]: _instance.__el[key]
+                  };
+                }, {});
+
+              debugInfo.el = this.convertObjectToComponentDebugInfo({
+                el
+              }, true);
             } else {
               debugInfo.info = {
                 success: false,
@@ -249,7 +262,7 @@ createStiDebugger = function (): void {
   })();
 };
 
-class StiInjector {
+export class StiInjector {
   private static _instance: StiInjector;
 
   private registrations: any[] = [];
@@ -319,7 +332,3 @@ class StiInjector {
     }
   }
 }
-
-const StiInjectorInstance: StiInjector = StiInjector.Instance;
-
-export default StiInjectorInstance;
