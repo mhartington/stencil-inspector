@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "minimum_chrome_version": "49",
   "description": "A Chrome plugin adding a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.",
-  "content_security_policy": "script-src 'self' 'sha256-xBP85yvVzIilV+FrplVyjr2GctG1mB6TGtE4hebfX4c='; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'sha256-xBP85yvVzIilV+FrplVyjr2GctG1mB6TGtE4hebfX4c='; object-src 'self'",
   "default_locale": "en",
   "devtools_page": "devtools.html",
   "icons": {
