@@ -5,8 +5,7 @@ import {
 
 @Component({
   tag: 'sti-arrow',
-  styleUrl: 'sti-arrow.pcss',
-  shadow: true
+  styleUrl: 'sti-arrow.pcss'
 })
 export class StiArrow {
   @Prop()

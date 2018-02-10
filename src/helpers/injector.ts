@@ -15,9 +15,9 @@ import {
 } from './interfaces';
 
 createStiScout = (): void => {
-  // if (window.stiScout) {
-  //   return;
-  // }
+  if (window.stiScout) {
+    window.stiScout = undefined;
+  }
 
   (function (): void {
     /** It works as an id for the cached elements */
@@ -138,7 +138,7 @@ createStiScout = (): void => {
       },
 
       /** Create an item */
-      createStiEntry(entryPartial: Partial<StiEntry>, value: any, instance: any): StiEntry {
+      createStiEntry(entryPartial: Partial<StiEntry>, value: any): StiEntry {
         try {
           let expandableValue: any;
 
@@ -193,7 +193,6 @@ createStiScout = (): void => {
           entryPartial.cachingIndex = currentCachingIndex;
 
           this.cachingMap[cachingIndex] = {
-            instance,
             expandableValue,
             cachingIndex: currentCachingIndex
           };
@@ -277,7 +276,6 @@ createStiScout = (): void => {
                   returnObj.value = value;
 
                   this.cachingMap[returnObj.cachingIndex] = {
-                    instance: returnObj,
                     expandableValue: {
                       value: _instance[propName],
                       ...currentCmpType.props[propName]

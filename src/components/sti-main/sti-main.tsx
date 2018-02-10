@@ -13,8 +13,7 @@ import {
 
 @Component({
   tag: 'sti-main',
-  styleUrl: 'sti-main.pcss',
-  shadow: true
+  styleUrl: 'sti-main.pcss'
 })
 export class StiMain {
   @State()

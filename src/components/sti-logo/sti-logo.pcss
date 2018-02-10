@@ -1,31 +1,27 @@
-:host {
-  display: grid;
-  width: 100%;
+sti-logo {
+  display: flex;
+  flex-basis: 100%;
   background: rgb(244, 244, 244);
   padding: 5px 0;
-  align-items: center;
-  justify-content: center;
   color: rgb(22, 22, 29);
-  grid-template-areas: 'logo badge';
-  grid-gap: 5px;
+  justify-content: center;
 
   & .logo {
-    display: block;
-    grid-area: logo;
-    width: 100px;
+    display: inline-flex;
     height: 25px;
+    vertical-align: text-top;
   }
 
   & .badge {
-    grid-area: badge;
+    display: inline-flex;
     font-weight: 800;
     font-size: 12px;
-    align-self: start;
+    vertical-align: super;
     letter-spacing: -1px;
   }
-}
 
-:host(.dark) {
-  background: rgb(42, 42, 42);
-  color: rgb(244, 244, 244);
+  &.dark {
+    background: rgb(42, 42, 42);
+    color: rgb(244, 244, 244);
+  }
 }

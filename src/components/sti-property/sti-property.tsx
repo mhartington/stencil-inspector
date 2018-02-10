@@ -16,8 +16,7 @@ import {
 
 @Component({
   tag: 'sti-property',
-  styleUrl: 'sti-property.pcss',
-  shadow: true
+  styleUrl: 'sti-property.pcss'
 })
 export class StiPropertyView {
   @Prop()
@@ -29,7 +28,6 @@ export class StiPropertyView {
   @State()
   private isExpanded: boolean = false;
 
-  @State()
   private expandedValue: StiGroupInterface = null;
 
   @Watch('item')
@@ -62,29 +60,30 @@ export class StiPropertyView {
     }, this.item, this.itemsChangeHandler);
   }
 
-  private renderChild(child: StiEntry): JSX.Element {
-    return (
-      <sti-property
-        item={child}
-        darkTheme={this.darkTheme}
-      />
-    );
-  }
-
-  private renderChildList(isExpanded: boolean, items: StiGroupInterface): JSX.Element {
-    if (!isExpanded || !items) {
+  private renderChildList(): JSX.Element {
+    if (!this.isExpanded || !this.expandedValue) {
       return null;
     }
 
-    const itemsArr: StiEntry[] = Object.keys(items)
-      .map((itemKey: string): StiEntry => {
-        return items[itemKey];
+    const itemsArr: JSX.Element[] = Object.keys(this.expandedValue)
+      .map((itemKey: string): JSX.Element => {
+        return (
+          <sti-property
+            item={this.expandedValue[itemKey]}
+            darkTheme={this.darkTheme}
+          />
+        );
       });
 
     return (
       <div class='children'>
-        <sti-message message={itemsArr.length === 0 ? 'Object has no properties.' : ''} />
-        {itemsArr.map(this.renderChild)}
+        {
+          itemsArr.length > 0 ?
+            itemsArr :
+            (
+              <sti-message message={itemsArr.length === 0 ? 'Object has no properties.' : ''} />
+            )
+        }
       </div>
     );
   }
@@ -111,7 +110,7 @@ export class StiPropertyView {
           </div>
         </div>
       ),
-      this.item.canExpand ? this.renderChildList(this.isExpanded, this.expandedValue) : null
+      this.renderChildList()
     ];
   }
 }

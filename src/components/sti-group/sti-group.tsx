@@ -6,15 +6,13 @@ import {
 
 import autobind from '~decorators/autobind';
 import {
-  StiEntry,
   StiGroupInterface,
   StiStatus
 } from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-group',
-  styleUrl: 'sti-group.pcss',
-  shadow: true
+  styleUrl: 'sti-group.pcss'
 })
 export class StiGroup {
   @Prop()
@@ -46,29 +44,49 @@ export class StiGroup {
     this.expanded = !this.expanded;
   }
 
-  private renderChild(child: StiEntry): JSX.Element {
-    return (
-      <sti-property
-        item={child}
-        darkTheme={this.darkTheme}
-      />
-    );
-  }
+  private renderChildList(): JSX.Element {
+    if (!this.expanded) {
+      return null;
+    }
 
-  protected render(): JSX.Element[] {
     const {
       success,
       message
     } = this.info;
 
-    const itemKeys: string[] = Object.keys(this.items || {});
+    let actualMessage: string = '';
+    let itemsArr: JSX.Element[] = [];
 
-    const actualError: string = success === false ? message : (itemKeys.length === 0 ? `${this.group} not available` : '');
+    if (!success) {
+      actualMessage = message;
+    } else {
+      itemsArr = Object.keys(this.items || {})
+        .map((itemKey: string): JSX.Element => {
+          return (
+            <sti-property
+              item={this.items[itemKey]}
+              darkTheme={this.darkTheme}
+            />
+          );
+        });
 
-    const itemsArr: StiEntry[] = itemKeys.map((itemKey: string): StiEntry => {
-      return this.items[itemKey];
-    });
+      actualMessage = itemsArr.length === 0 ? `${this.group} not available` : '';
+    }
 
+    return (
+      <div class='content'>
+        {
+          actualMessage ?
+            (
+              <sti-message message={actualMessage} />
+            ) :
+            itemsArr
+        }
+      </div>
+    );
+  }
+
+  protected render(): JSX.Element[] {
     return [
       (
         <h2
@@ -84,12 +102,7 @@ export class StiGroup {
           </div>
         </h2>
       ),
-      (
-        <div class='content'>
-          <sti-message message={actualError} />
-          {this.expanded ? itemsArr.map(this.renderChild) : null}
-        </div>
-      )
+      this.renderChildList()
     ];
   }
 }

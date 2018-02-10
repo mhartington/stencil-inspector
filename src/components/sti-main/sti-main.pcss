@@ -1,39 +1,17 @@
-:host {
-  display: grid;
-  grid-template-areas:
-    'logo'
-    'props'
-    'states'
-    'methods'
-    'elements'
-    'instance'
-    'components';
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
 
-  & .logo {
-    grid-area: logo;
-  }
+/* stylelint-disable selector-max-universal */
+* {
+  box-sizing: border-box;
+}
 
-  & .props {
-    grid-area: props;
-  }
-
-  & .states {
-    grid-area: states;
-  }
-
-  & .methods {
-    grid-area: methods;
-  }
-
-  & .elements {
-    grid-area: elements;
-  }
-
-  & .instance {
-    grid-area: instance;
-  }
-
-  & .components {
-    grid-area: components;
-  }
+sti-main {
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
 }
