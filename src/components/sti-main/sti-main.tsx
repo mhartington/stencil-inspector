@@ -60,16 +60,7 @@ export class StiMain {
       ),
       (
         <sti-group-view
-          heading='Component Info'
-          category='cmp'
-          items={this.debugInfo.cmp}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      ),
-      (
-        <sti-group-view
-          heading='Component Props'
+          heading='Props'
           category='props'
           items={this.debugInfo.props}
           info={this.debugInfo.info}
@@ -78,9 +69,45 @@ export class StiMain {
       ),
       (
         <sti-group-view
-          heading='Element'
-          category='el'
-          items={this.debugInfo.el}
+          heading='States'
+          category='states'
+          items={this.debugInfo.states}
+          info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
+        />
+      ),
+      (
+        <sti-group-view
+          heading='Methods'
+          category='methods'
+          items={this.debugInfo.methods}
+          info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
+        />
+      ),
+      (
+        <sti-group-view
+          heading='Elements'
+          category='elements'
+          items={this.debugInfo.elements}
+          info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
+        />
+      ),
+      (
+        <sti-group-view
+          heading='Instance'
+          category='instance'
+          items={this.debugInfo.instance}
+          info={this.debugInfo.info}
+          darkTheme={this.isDarkTheme}
+        />
+      ),
+      (
+        <sti-group-view
+          heading='Registered Components'
+          category='cmp'
+          items={this.debugInfo.cmp}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
         />

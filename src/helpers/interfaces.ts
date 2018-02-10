@@ -27,7 +27,10 @@ export interface StiStatus {
 
 export interface StiMap {
   info: StiStatus;
-  cmp?: StiGroup;
   props?: StiGroup;
-  el?: StiGroup;
+  states?: StiGroup;
+  methods?: StiGroup;
+  elements?: StiGroup;
+  instance?: StiGroup;
+  cmp?: StiGroup;
 }

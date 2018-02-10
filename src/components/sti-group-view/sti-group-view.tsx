@@ -1,7 +1,9 @@
 import {
   Component,
-  Prop
+  Prop,
+  State
 } from '@stencil/core';
+import autobind from '~decorators/autobind';
 
 import {
   StiEntry,
@@ -29,12 +31,32 @@ export class StiGroupView {
   @Prop()
   public darkTheme: boolean = false;
 
+  @State()
+  private expanded: boolean = true;
+
   protected hostData(): JSXElements.StiGroupViewAttributes {
     return {
       class: {
         darkTheme: this.darkTheme
       }
     };
+  }
+
+  @autobind
+  private arrowClickHandler(): void {
+    this.expanded = !this.expanded;
+  }
+
+  private renderArrow(isExpanded: boolean): JSX.Element {
+    if (isExpanded) {
+      return (
+        <span class='down'>▼</span>
+      );
+    }
+
+    return (
+      <span class='right'>▶</span>
+    );
   }
 
   private renderError(message: string = ''): JSX.Element {
@@ -78,9 +100,15 @@ export class StiGroupView {
     return (
       <section>
         <h2 class='header'>
+          <span
+            class='arrow'
+            onClick={this.arrowClickHandler}
+          >
+            {this.renderArrow(this.expanded)}
+          </span>
           {this.heading}
         </h2>
-        <div class='content'>
+        <div class={`content ${this.expanded ? 'expanded' : 'not-expanded'}`}>
           {actualError ?
             this.renderError(actualError) :
             this.renderChildList(this.items)

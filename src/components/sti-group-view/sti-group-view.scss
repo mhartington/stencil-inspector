@@ -7,10 +7,25 @@ sti-group-view {
     background: rgb(244, 244, 244);
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
     border-top: 1px solid rgba(0, 0, 0, 0.25);
+
+    & .arrow {
+      font-size: 10px;
+      color: rgb(105, 105, 105);
+      cursor: default;
+
+      & .right {
+        margin-right: 1px;
+      }
+    }
   }
 
   & .content {
     margin: 4px;
+    display: none;
+
+    &.expanded {
+      display: block;
+    }
   }
 
   &.dark {
