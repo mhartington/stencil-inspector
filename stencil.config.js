@@ -10,6 +10,7 @@ exports.config = {
   hydratedCssClass: 'hydrated',
   logLevel: 'info',
   namespace: 'sti',
+  serviceWorker: false,
   copy: {
     statics: {
       src: 'statics/**/**',
