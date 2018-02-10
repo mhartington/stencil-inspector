@@ -1,0 +1,106 @@
+:host {
+  display: grid;
+  grid-template-areas:
+    'property'
+    'children';
+  grid-gap: 2px;
+  max-width: 100vw;
+  overflow: hidden;
+
+  & .property {
+    grid-area: property;
+    display: grid;
+    grid-template-areas: 'arrow name value';
+    grid-auto-columns: max-content max-content auto;
+    grid-gap: 3px;
+
+    & .arrow {
+      grid-area: arrow;
+    }
+
+    & .name {
+      font-size: 12px;
+      color: rgb(128, 0, 128);
+      font-family: monospace;
+      margin-left: 1px;
+
+      &:after {
+        content: ':';
+        font-size: 12px;
+        color: rgb(105, 105, 105);
+        font-family: monospace;
+      }
+    }
+
+    & .value {
+      font-size: 12px;
+      color: rgb(105, 105, 105);
+      font-family: monospace;
+
+      &.null,
+      &.undefined {
+        color: rgb(105, 105, 105);
+      }
+
+      &.boolean {
+        color: rgb(255, 20, 147);
+      }
+
+      &.string {
+        color: rgb(255, 0, 0);
+        white-space: nowrap;
+
+        &:before,
+        &:after {
+          content: '"';
+        }
+      }
+
+      &.number {
+        color: rgb(0, 0, 255);
+      }
+
+      &.array {
+        color: rgb(0, 0, 0);
+      }
+
+      &.object,
+      &.node {
+        color: rgb(0, 0, 0);
+      }
+
+      &.node {
+        color: rgb(203, 203, 203);
+      }
+    }
+  }
+
+  & .children {
+    display: grid;
+    padding-left: 16px;
+  }
+}
+
+:host(.dark) {
+  & .property {
+    & .name {
+      color: rgb(52, 199, 187);
+    }
+
+    & .value {
+      &.string,
+      &.array,
+      &.object {
+        color: rgb(203, 203, 203);
+      }
+
+      &.number {
+        color: rgb(89, 166, 202);
+      }
+
+      &.no-properties {
+        color: rgb(152, 152, 152);
+      }
+    }
+  }
+}

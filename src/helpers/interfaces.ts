@@ -12,11 +12,11 @@ export interface StiEntry {
   isExpanded: boolean;
   type: string;
   value: string;
-  expandedValue: StiGroup;
+  expandedValue: StiGroupInterface;
   cachingIndex: number;
 }
 
-export interface StiGroup {
+export interface StiGroupInterface {
   [field: string]: StiEntry;
 }
 
@@ -27,10 +27,11 @@ export interface StiStatus {
 
 export interface StiMap {
   info: StiStatus;
-  props?: StiGroup;
-  states?: StiGroup;
-  methods?: StiGroup;
-  elements?: StiGroup;
-  instance?: StiGroup;
-  cmp?: StiGroup;
+  details?: StiGroupInterface;
+  props?: StiGroupInterface;
+  states?: StiGroupInterface;
+  methods?: StiGroupInterface;
+  elements?: StiGroupInterface;
+  instance?: StiGroupInterface;
+  cmp?: StiGroupInterface;
 }

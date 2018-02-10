@@ -10,11 +10,11 @@ import {
 
 import {
   StiEntry,
-  StiGroup,
+  StiGroupInterface,
   StiMap
 } from './interfaces';
 
-createStiScout = function (): void {
+createStiScout = (): void => {
   // if (window.stiScout) {
   //   return;
   // }
@@ -42,6 +42,7 @@ createStiScout = function (): void {
     }
 
     window.stiScout = {
+      /** Split the members in categories */
       parseComponentMemberData(receivedMembers: any[] = []): any {
         const members: any = {
           props: {},
@@ -204,16 +205,19 @@ createStiScout = function (): void {
       },
 
       /** Convert an object into a group of items */
-      convertObjectToGroup(obj: {}): StiGroup {
-        return Object.getOwnPropertyNames(obj)
-          .reduce((acc: StiGroup, name: string) => {
-            return {
-              ...acc,
-              [name]: this.createStiEntry({
-                name
-              }, obj[name], obj)
-            };
-          }, {});
+      convertObjectToGroup(obj: {}, getAllProps: boolean = false): StiGroupInterface {
+        const keys: string[] = getAllProps ?
+          Object.getOwnPropertyNames(obj) :
+          Object.keys(obj);
+
+        return keys.reduce((acc: StiGroupInterface, name: string) => {
+          return {
+            ...acc,
+            [name]: this.createStiEntry({
+              name
+            }, obj[name], obj)
+          };
+        }, {});
       },
 
       /** Read the data about the current selected node */
@@ -337,7 +341,7 @@ createStiScout = function (): void {
         }
       },
 
-      getExpandedValue(id: number): StiGroup {
+      getExpandedValue(id: number): StiGroupInterface {
         let value: any = this.cachingMap[id].expandableValue;
 
         if (Array.isArray(value)) {
@@ -415,7 +419,7 @@ export class StiInjector {
 
         waitForEval = true;
 
-        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: StiGroup) => {
+        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: StiGroupInterface) => {
           expandedValue = newExpandedValue;
 
           callback({

@@ -11,6 +11,9 @@ exports.config = {
   logLevel: 'info',
   namespace: 'sti',
   serviceWorker: false,
+  globalStyle: [
+    'src/styles/global.css'
+  ],
   copy: {
     statics: {
       src: 'statics/**/**',
@@ -19,5 +22,14 @@ exports.config = {
     images: {
       src: 'images/**/**'
     },
-  }
+  },
+  plugins: [
+    require('./plugins/postcss')({
+      plugins: [
+        require('postcss-url')(),
+        require('postcss-cssnext')(),
+        require('postcss-reporter')()
+      ]
+    })
+  ]
 };

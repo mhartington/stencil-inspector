@@ -13,10 +13,8 @@ import {
 
 @Component({
   tag: 'sti-main',
-  styleUrls: [
-    'reset.css',
-    'sti-main.scss'
-  ]
+  styleUrl: 'sti-main.pcss',
+  shadow: true
 })
 export class StiMain {
   @State()
@@ -39,7 +37,7 @@ export class StiMain {
   protected hostData(): JSXElements.StiMainAttributes {
     return {
       class: {
-        darkTheme: this.isDarkTheme
+        dark: this.isDarkTheme
       }
     };
   }
@@ -51,62 +49,60 @@ export class StiMain {
 
     return [
       (
-        <h1 class='app-header'>
-          <sti-logo />
-          <span class='logo-badge'>
-            INSPECTOR
-          </span>
-        </h1>
+        <sti-logo
+          class='logo'
+          darkTheme={this.isDarkTheme}
+        />
       ),
       (
-        <sti-group-view
-          heading='Props'
-          category='props'
+        <sti-group
+          group='Props'
+          class='props'
           items={this.debugInfo.props}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-group-view
-          heading='States'
-          category='states'
+        <sti-group
+          group='States'
+          class='states'
           items={this.debugInfo.states}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-group-view
-          heading='Methods'
-          category='methods'
+        <sti-group
+          group='Methods'
+          class='methods'
           items={this.debugInfo.methods}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-group-view
-          heading='Elements'
-          category='elements'
+        <sti-group
+          group='Elements'
+          class='elements'
           items={this.debugInfo.elements}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-group-view
-          heading='Instance'
-          category='instance'
+        <sti-group
+          group='Instance'
+          class='instance'
           items={this.debugInfo.instance}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
         />
       ),
       (
-        <sti-group-view
-          heading='Registered Components'
-          category='cmp'
+        <sti-group
+          group='Registered Components'
+          class='components'
           items={this.debugInfo.cmp}
           info={this.debugInfo.info}
           darkTheme={this.isDarkTheme}
