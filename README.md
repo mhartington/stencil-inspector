@@ -2,11 +2,13 @@
 
 A Chrome plugin that adds a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.
 
-## Features
+## Available Inspections
 1. Props
 2. States
 3. Methods
 4. Class Instance
+5. DOM Element
+6. App Context
 5. Defined Components
 
 ## Instructions

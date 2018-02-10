@@ -10,17 +10,17 @@ import {
   StiInjector
 } from '~helpers/injector';
 import {
-  StiEntry,
-  StiGroupInterface
+  StiItemData
 } from '~helpers/interfaces';
 
 @Component({
-  tag: 'sti-property',
-  styleUrl: 'sti-property.pcss'
+  tag: 'sti-item',
+  styleUrl: 'sti-item.pcss',
+  shadow: true
 })
-export class StiPropertyView {
+export class StiItemView {
   @Prop()
-  public item: StiEntry = null;
+  public item: StiItemData = null;
 
   @Prop()
   public darkTheme: boolean = false;
@@ -28,16 +28,16 @@ export class StiPropertyView {
   @State()
   private isExpanded: boolean = false;
 
-  private expandedValue: StiGroupInterface = null;
+  private expandedValue: StiItemData[] = [];
 
   @Watch('item')
   protected itemChangeHandler(): void {
     this.isExpanded = false;
 
-    this.expandedValue = null;
+    this.expandedValue = [];
   }
 
-  protected hostData(): JSXElements.StiPropertyAttributes {
+  protected hostData(): JSXElements.StiItemAttributes {
     return {
       class: {
         dark: this.darkTheme
@@ -46,7 +46,7 @@ export class StiPropertyView {
   }
 
   @autobind
-  private itemsChangeHandler(newItem: { isExpanded: boolean; expandedValue: StiGroupInterface }): void {
+  private itemsChangeHandler(newItem: { isExpanded: boolean; expandedValue: StiItemData[] }): void {
     this.isExpanded = newItem.isExpanded;
 
     this.expandedValue = newItem.expandedValue;
@@ -60,28 +60,23 @@ export class StiPropertyView {
     }, this.item, this.itemsChangeHandler);
   }
 
+  private renderChild(item: StiItemData): JSX.Element {
+    return (
+      <sti-item
+        item={item}
+        darkTheme={this.darkTheme}
+      />
+    );
+  }
+
   private renderChildList(): JSX.Element {
-    if (!this.isExpanded || !this.expandedValue) {
-      return null;
-    }
-
-    const itemsArr: JSX.Element[] = Object.keys(this.expandedValue)
-      .map((itemKey: string): JSX.Element => {
-        return (
-          <sti-property
-            item={this.expandedValue[itemKey]}
-            darkTheme={this.darkTheme}
-          />
-        );
-      });
-
     return (
       <div class='children'>
         {
-          itemsArr.length > 0 ?
-            itemsArr :
+          this.expandedValue.length > 0 ?
+            this.expandedValue.map(this.renderChild) :
             (
-              <sti-message message={itemsArr.length === 0 ? 'Object has no properties.' : ''} />
+              <sti-message message='Object has no properties.' />
             )
         }
       </div>
@@ -91,7 +86,7 @@ export class StiPropertyView {
   protected render(): JSX.Element[] {
     return [
       (
-        <div class='property'>
+        <div class='item'>
           {
             this.item.canExpand ?
               (
@@ -110,7 +105,7 @@ export class StiPropertyView {
           </div>
         </div>
       ),
-      this.renderChildList()
+      !this.isExpanded ? null : this.renderChildList()
     ];
   }
 }

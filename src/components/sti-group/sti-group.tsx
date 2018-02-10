@@ -6,29 +6,36 @@ import {
 
 import autobind from '~decorators/autobind';
 import {
-  StiGroupInterface,
-  StiStatus
+  StiGroupData,
+  StiItemData,
+  StiStatusData
 } from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-group',
-  styleUrl: 'sti-group.pcss'
+  styleUrl: 'sti-group.pcss',
+  shadow: true
 })
 export class StiGroup {
   @Prop()
-  public group: string = '';
+  public group: StiGroupData = {
+    label: '',
+    items: [],
+    expanded: true
+  };
 
   @Prop()
-  public items: StiGroupInterface = {};
-
-  @Prop()
-  public info: StiStatus = null;
+  public info: StiStatusData = null;
 
   @Prop()
   public darkTheme: boolean = false;
 
   @State()
   private expanded: boolean = true;
+
+  protected componentWillLoad(): void {
+    this.expanded = this.group.expanded;
+  }
 
   protected hostData(): JSXElements.StiGroupAttributes {
     return {
@@ -42,6 +49,15 @@ export class StiGroup {
   @autobind
   private headerClickHandler(): void {
     this.expanded = !this.expanded;
+  }
+
+  private renderChild(item: StiItemData): JSX.Element {
+    return (
+      <sti-item
+        item={item}
+        darkTheme={this.darkTheme}
+      />
+    );
   }
 
   private renderChildList(): JSX.Element {
@@ -60,17 +76,9 @@ export class StiGroup {
     if (!success) {
       actualMessage = message;
     } else {
-      itemsArr = Object.keys(this.items || {})
-        .map((itemKey: string): JSX.Element => {
-          return (
-            <sti-property
-              item={this.items[itemKey]}
-              darkTheme={this.darkTheme}
-            />
-          );
-        });
+      itemsArr = this.group.items.map(this.renderChild);
 
-      actualMessage = itemsArr.length === 0 ? `${this.group} not available` : '';
+      actualMessage = itemsArr.length === 0 ? `${this.group.label} not available` : '';
     }
 
     return (
@@ -98,7 +106,7 @@ export class StiGroup {
             direction={this.expanded}
           />
           <div class='label'>
-            {this.group}
+            {this.group.label}
           </div>
         </h2>
       ),

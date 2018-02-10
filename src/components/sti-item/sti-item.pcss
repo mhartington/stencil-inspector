@@ -1,10 +1,10 @@
-sti-property {
+:host {
   display: flex;
   flex-basis: 100%;
   overflow: hidden;
   flex-wrap: wrap;
 
-  & .property {
+  & .item {
     display: flex;
     flex-basis: 100%;
     padding: 3px 0;
@@ -70,27 +70,23 @@ sti-property {
   & .children {
     padding-left: 16px;
   }
+}
 
-  &.dark {
-    & .property {
-      & .name {
-        color: rgb(52, 199, 187);
+:host(.dark) {
+  & .item {
+    & .name {
+      color: rgb(52, 199, 187);
+    }
+
+    & .value {
+      &.string,
+      &.array,
+      &.object {
+        color: rgb(203, 203, 203);
       }
 
-      & .value {
-        &.string,
-        &.array,
-        &.object {
-          color: rgb(203, 203, 203);
-        }
-
-        &.number {
-          color: rgb(89, 166, 202);
-        }
-
-        &.no-properties {
-          color: rgb(152, 152, 152);
-        }
+      &.number {
+        color: rgb(89, 166, 202);
       }
     }
   }

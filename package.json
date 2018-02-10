@@ -30,7 +30,7 @@
     "lint:styles": "stylelint \"src/**/*.{css,scss,less,pcss}\" --cache --cache-location \"./.stylelint-cache\""
   },
   "dependencies": {
-    "@stencil/core": "0.4.0"
+    "@stencil/core": "0.4.1"
   },
   "devDependencies": {
     "@stencil/utils": "0.0.4",

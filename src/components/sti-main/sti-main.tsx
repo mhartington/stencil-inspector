@@ -8,16 +8,24 @@ import {
   StiInjector
 } from '~helpers/injector';
 import {
-  StiMap
+  StiGroupData,
+  StiMapData
 } from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-main',
-  styleUrl: 'sti-main.pcss'
+  styleUrl: 'sti-main.pcss',
+  shadow: true
 })
 export class StiMain {
   @State()
-  private debugInfo: StiMap;
+  private mapData: StiMapData = {
+    info: {
+      success: false,
+      message: 'Loading...'
+    },
+    groups: []
+  };
 
   @State()
   private isDarkTheme: boolean = false;
@@ -29,8 +37,8 @@ export class StiMain {
   }
 
   @autobind
-  private elementInfoChangeHandler(debugInfo: StiMap): void {
-    this.debugInfo = debugInfo;
+  private elementInfoChangeHandler(mapData: StiMapData): void {
+    this.mapData = mapData;
   }
 
   protected hostData(): JSXElements.StiMainAttributes {
@@ -41,11 +49,18 @@ export class StiMain {
     };
   }
 
-  protected render(): null | JSX.Element[] {
-    if (!this.debugInfo) {
-      return null;
-    }
+  @autobind
+  private renderGroup(group: StiGroupData): JSX.Element {
+    return (
+      <sti-group
+        group={group}
+        info={this.mapData.info}
+        darkTheme={this.isDarkTheme}
+      />
+    );
+  }
 
+  protected render(): null | JSX.Element[] {
     return [
       (
         <sti-logo
@@ -53,60 +68,15 @@ export class StiMain {
           darkTheme={this.isDarkTheme}
         />
       ),
-      (
-        <sti-group
-          group='Props'
-          class='props'
-          items={this.debugInfo.props}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      ),
-      (
-        <sti-group
-          group='States'
-          class='states'
-          items={this.debugInfo.states}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      ),
-      (
-        <sti-group
-          group='Methods'
-          class='methods'
-          items={this.debugInfo.methods}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      ),
-      (
-        <sti-group
-          group='Elements'
-          class='elements'
-          items={this.debugInfo.elements}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      ),
-      (
-        <sti-group
-          group='Instance'
-          class='instance'
-          items={this.debugInfo.instance}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      ),
-      (
-        <sti-group
-          group='Registered Components'
-          class='components'
-          items={this.debugInfo.cmp}
-          info={this.debugInfo.info}
-          darkTheme={this.isDarkTheme}
-        />
-      )
+      this.mapData.groups.length > 0 ?
+        this.mapData.groups.map(this.renderGroup) :
+          (
+            !this.mapData.info.success ?
+              (
+                <sti-message message={this.mapData.info.message} />
+              ) :
+              null
+          )
     ];
   }
 }

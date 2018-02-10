@@ -11,6 +11,9 @@ exports.config = {
   logLevel: 'info',
   namespace: 'sti',
   serviceWorker: false,
+  globalStyle: [
+    'src/styles/global.css'
+  ],
   copy: {
     statics: {
       src: 'statics/**/**',

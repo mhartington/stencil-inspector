@@ -5,7 +5,8 @@ import {
 
 @Component({
   tag: 'sti-message',
-  styleUrl: 'sti-message.pcss'
+  styleUrl: 'sti-message.pcss',
+  shadow: true
 })
 export class StiMessage {
   @Prop()

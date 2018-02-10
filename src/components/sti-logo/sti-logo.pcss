@@ -1,9 +1,10 @@
-sti-logo {
+:host {
   display: flex;
   flex-basis: 100%;
   background: rgb(244, 244, 244);
   padding: 5px 0;
   color: rgb(22, 22, 29);
+  min-width: 100vw;
   justify-content: center;
 
   & .logo {
@@ -19,9 +20,9 @@ sti-logo {
     vertical-align: super;
     letter-spacing: -1px;
   }
+}
 
-  &.dark {
-    background: rgb(42, 42, 42);
-    color: rgb(244, 244, 244);
-  }
+:host(.dark) {
+  background: rgb(42, 42, 42);
+  color: rgb(244, 244, 244);
 }

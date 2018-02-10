@@ -5,7 +5,8 @@ import {
 
 @Component({
   tag: 'sti-logo',
-  styleUrl: 'sti-logo.pcss'
+  styleUrl: 'sti-logo.pcss',
+  shadow: true
 })
 export class StiLogo {
   @Prop()

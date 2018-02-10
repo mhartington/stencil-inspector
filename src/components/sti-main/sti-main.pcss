@@ -1,17 +1,9 @@
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-/* stylelint-disable selector-max-universal */
-* {
-  box-sizing: border-box;
-}
-
-sti-main {
+:host {
   display: flex;
   flex-wrap: wrap;
   width: fit-content;
+
+  & .message {
+    text-align: center;
+  }
 }

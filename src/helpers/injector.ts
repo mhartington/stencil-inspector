@@ -1,25 +1,25 @@
 // tslint:disable:no-invalid-this
 
 import {
-  AppGlobal
+  AppGlobal,
+  ComponentInstance
 } from '@stencil/core/dist/declarations';
 import {
   ComponentListenersData,
   HostElement
 } from '@stencil/core/dist/declarations/component';
-
 import {
-  StiEntry,
-  StiGroupInterface,
-  StiMap
-} from './interfaces';
+  StiGroupData,
+  StiItemData,
+  StiMapData
+} from '~helpers/interfaces';
 
 createStiScout = (): void => {
   if (window.stiScout) {
     window.stiScout = undefined;
   }
 
-  (function (): void {
+  ((): void => {
     /** It works as an id for the cached elements */
     let cachingIndex: number = 0;
 
@@ -28,22 +28,9 @@ createStiScout = (): void => {
       return ++cachingIndex;
     }
 
-    /** Filter the properties of an object */
-    function filterKeys(obj: {}, skipUnderline: boolean = false): string[] {
-      const props: string[] = [];
-
-      for (const key in obj) {
-        if (key && key !== '__el' && (skipUnderline === false || !key.startsWith('_'))) {
-          props.push(key);
-        }
-      }
-
-      return props;
-    }
-
     window.stiScout = {
-      /** Split the members in categories */
-      parseComponentMemberData(receivedMembers: any[] = []): any {
+      /** Read the members of every component */
+      buildComponentsMembers(receivedMembers: any[] = []): any {
         const members: any = {
           props: {},
           states: {},
@@ -91,6 +78,7 @@ createStiScout = (): void => {
         return members;
       },
 
+      /** Read the details of components */
       buildComponentsDetails(): any {
         const app: AppGlobal = (window as any).app;
 
@@ -98,7 +86,7 @@ createStiScout = (): void => {
           const tag: string = comp[0] || 'unknown';
           const bundle: string = comp[1] || 'unknown';
           const hasStyles: boolean = !!comp[2] || false;
-          const members: any[] = this.parseComponentMemberData(comp[3]);
+          const members: any[] = this.buildComponentsMembers(comp[3]);
 
           const encapsulatedValue: number = comp[4] || 0;
 
@@ -137,90 +125,156 @@ createStiScout = (): void => {
         }, {});
       },
 
+      /** Read the props group */
+      buildProps(currentCmpType: any, instance: ComponentInstance): StiGroupData {
+        return {
+          label: 'Props',
+          expanded: true,
+          items: Object.keys(currentCmpType.props)
+            .map((propName: string) => {
+              const returnObj: any = {
+                name: propName,
+                type: 'object',
+                canExpand: true,
+                cachingIndex: getNextCachingIndex()
+              };
+
+              let value: any = instance[propName];
+
+              if (value instanceof Node) {
+                value = value.constructor.name;
+              } else if (Array.isArray(value)) {
+                value = `Array[${value.length}]`;
+              } else if (value === null) {
+                value = 'null';
+              } else if (typeof value === 'undefined') {
+                value = 'undefined';
+              } else if (typeof value === 'function') {
+                value = `ƒ ${value.name || 'unknown'}`;
+              } else if (typeof value === 'object') {
+                value = value.constructor ? value.constructor.name : 'Object';
+              }
+
+              returnObj.value = value;
+
+              this.cachingMap[returnObj.cachingIndex] = {
+                expandableValue: {
+                  value: instance[propName],
+                  ...currentCmpType.props[propName]
+                },
+                cachingIndex: returnObj.cachingIndex
+              };
+
+              return returnObj;
+            }, [])
+        };
+      },
+
       /** Create an item */
-      createStiEntry(entryPartial: Partial<StiEntry>, value: any): StiEntry {
+      createItem(partialItem: Partial<StiItemData>, value: any): StiItemData {
         try {
           let expandableValue: any;
 
           if (value instanceof Node) {
-            entryPartial.canExpand = true;
+            partialItem.canExpand = true;
 
-            entryPartial.type = 'node';
+            partialItem.type = 'node';
 
-            entryPartial.value = value.constructor.name;
+            partialItem.value = value.constructor.name;
 
             expandableValue = value;
           } else if (Array.isArray(value)) {
-            entryPartial.canExpand = true;
+            partialItem.canExpand = true;
 
-            entryPartial.type = 'array';
+            partialItem.type = 'array';
 
-            entryPartial.value = `Array[${value.length}]`;
+            partialItem.value = `Array[${value.length}]`;
 
             expandableValue = value;
           } else {
-            entryPartial.type = typeof value;
+            partialItem.type = typeof value;
 
-            entryPartial.value = value;
+            partialItem.value = value;
           }
 
           if (value === null) {
-            entryPartial.type = 'null';
+            partialItem.type = 'null';
 
-            entryPartial.value = 'null';
+            partialItem.value = 'null';
           } else if (value === undefined) {
-            entryPartial.type = 'undefined';
+            partialItem.type = 'undefined';
 
-            entryPartial.value = 'undefined';
-          } else if (entryPartial.type === 'object') {
-            entryPartial.canExpand = true;
+            partialItem.value = 'undefined';
+          } else if (partialItem.type === 'object') {
+            partialItem.canExpand = true;
 
             expandableValue = value;
 
-            entryPartial.value = value.constructor ? value.constructor.name : 'Object';
+            partialItem.value = value.constructor ? value.constructor.name : 'Object';
           } else if (typeof value === 'function') {
-            entryPartial.canExpand = true;
+            partialItem.canExpand = true;
 
-            entryPartial.value = `ƒ ${value.name || 'unknown'}`;
+            partialItem.value = `ƒ ${value.name || 'unknown'}`;
 
             expandableValue = {
               body: value.toString()
             };
           }
 
-          const currentCachingIndex: number = entryPartial.cachingIndex || getNextCachingIndex();
+          const currentCachingIndex: number = partialItem.cachingIndex || getNextCachingIndex();
 
-          entryPartial.cachingIndex = currentCachingIndex;
+          partialItem.cachingIndex = currentCachingIndex;
 
           this.cachingMap[cachingIndex] = {
             expandableValue,
             cachingIndex: currentCachingIndex
           };
 
-          return entryPartial as StiEntry;
+          return partialItem as StiItemData;
         } catch (e) {
           return null;
         }
       },
 
-      /** Convert an object into a group of items */
-      convertObjectToGroup(obj: {}, getAllProps: boolean = false): StiGroupInterface {
-        const keys: string[] = getAllProps ?
-          Object.getOwnPropertyNames(obj) :
-          Object.keys(obj);
+      /** Read the data and create and item */
+      buildGroupFromInstance(label: string, currentCmpType: any, instance: ComponentInstance): StiGroupData {
+        const key: string = label.toLowerCase();
 
-        return keys.reduce((acc: StiGroupInterface, name: string) => {
-          return {
-            ...acc,
-            [name]: this.createStiEntry({
+        return {
+          label,
+          expanded: true,
+          items: Object.keys(currentCmpType[key])
+            .map((propName: string): any => {
+              return this.createItem({
+                name: propName
+              }, instance[propName]);
+            })
+        };
+      },
+
+      /** Convert an object into a group of items */
+      convertObjectToGroup(label: string, obj: {}, expanded: boolean = true): StiGroupData {
+        const keys: string[] = [];
+
+        for (const key in obj) {
+          if (key) {
+            keys.push(key);
+          }
+        }
+
+        return {
+          label,
+          expanded,
+          items: keys.map((name: string): StiItemData => {
+            return this.createItem({
               name
-            }, obj[name], obj)
-          };
-        }, {});
+            }, obj[name]);
+          })
+        };
       },
 
       /** Read the data about the current selected node */
-      initializeMap(selectedNode: HostElement): StiMap {
+      initializeMap(selectedNode: HostElement): StiMapData {
         try {
           const {
             $connected,
@@ -228,7 +282,13 @@ createStiScout = (): void => {
           } = selectedNode;
 
           /** Initialize the map object */
-          const map: Partial<StiMap> = {};
+          const map: StiMapData = {
+            info: {
+              success: false,
+              message: ''
+            },
+            groups: []
+          };
 
           /** Initialize a new caching object */
           this.cachingMap = {};
@@ -237,130 +297,53 @@ createStiScout = (): void => {
 
           if (typeof $connected !== 'undefined') {
             if (typeof _instance !== 'undefined') {
-              map.info = {
-                success: true,
-                message: ''
-              };
+              map.info.success = true;
 
               const components: any = this.buildComponentsDetails();
 
-              map.cmp = this.convertObjectToGroup(components);
-
               const currentCmpType: any = components[selectedNode.tagName.toLowerCase()];
 
-              map.props = Object.keys(currentCmpType.props)
-                .reduce((acc: any, propName: string) => {
-                  const returnObj: any = {
-                    name: propName,
-                    type: 'object',
-                    canExpand: true,
-                    cachingIndex: getNextCachingIndex()
-                  };
-
-                  let value: any = _instance[propName];
-
-                  if (value instanceof Node) {
-                    value = value.constructor.name;
-                  } else if (Array.isArray(value)) {
-                    value = `Array[${value.length}]`;
-                  } else if (value === null) {
-                    value = 'null';
-                  } else if (typeof value === 'undefined') {
-                    value = 'undefined';
-                  } else if (typeof value === 'function') {
-                    value = `ƒ ${value.name || 'unknown'}`;
-                  } else if (typeof value === 'object') {
-                    value = value.constructor ? value.constructor.name : 'Object';
-                  }
-
-                  returnObj.value = value;
-
-                  this.cachingMap[returnObj.cachingIndex] = {
-                    expandableValue: {
-                      value: _instance[propName],
-                      ...currentCmpType.props[propName]
-                    },
-                    cachingIndex: returnObj.cachingIndex
-                  };
-
-                  return {
-                    ...acc,
-                    [propName]: returnObj
-                  };
-                }, {});
-
-              const states: any = Object.keys(currentCmpType.states)
-                .reduce((acc: {}, stateName: string): any => {
-                  return {
-                    ...acc,
-                    [stateName]: _instance[stateName]
-                  };
-                }, {});
-
-              map.states = this.convertObjectToGroup(states);
-
-              const methods: any = Object.keys(currentCmpType.methods)
-                .reduce((acc: {}, methodName: string): any => {
-                  return {
-                    ...acc,
-                    [methodName]: _instance[methodName]
-                  };
-                }, {});
-
-              map.methods = this.convertObjectToGroup(methods);
-
-              const elements: any = Object.keys(currentCmpType.elements)
-                .reduce((acc: {}, elementName: string): any => {
-                  return {
-                    ...acc,
-                    [elementName]: _instance[elementName]
-                  };
-                }, {});
-
-              map.elements = this.convertObjectToGroup(elements);
-
-              map.instance = this.convertObjectToGroup(_instance);
+              map.groups.push(this.buildProps(currentCmpType, _instance));
+              map.groups.push(this.buildGroupFromInstance('States', currentCmpType, _instance));
+              map.groups.push(this.buildGroupFromInstance('Methods', currentCmpType, _instance));
+              map.groups.push(this.buildGroupFromInstance('Elements', currentCmpType, _instance));
+              map.groups.push(this.convertObjectToGroup('Instance', _instance));
+              map.groups.push(this.convertObjectToGroup('Element', _instance.__el, false));
+              map.groups.push(this.convertObjectToGroup('Context', (window as any).app.Context));
+              map.groups.push(this.convertObjectToGroup('Registered Components', components, false));
             } else {
-              map.info = {
-                success: false,
-                message: 'Stencil is running in production mode'
-              };
+              map.info.message = 'Stencil is running in production mode';
             }
           } else {
-            map.info = {
-              success: false,
-              message: 'The element is not a Stencil component'
-            };
+            map.info.message = 'The element is not a Stencil component';
           }
 
-          return map as StiMap;
+          return map;
         } catch (e) {
-          return null;
+          return {
+            info: {
+              success: false,
+              message: 'Uncaught error'
+            },
+            groups: []
+          };
         }
       },
 
-      getExpandedValue(id: number): StiGroupInterface {
+      /** Read the expanded value data */
+      getExpandedValue(id: number): StiItemData[] {
         let value: any = this.cachingMap[id].expandableValue;
 
         if (Array.isArray(value)) {
-          const newValue: any = {};
-
-          value.forEach((currentValue: any, index: any) => {
-            newValue[index] = currentValue;
-          });
-
-          value = newValue;
-        }
-
-        value = filterKeys(value)
-          .reduce((acc: {}, key: string): any => {
+          value = value.reduce((acc: {}, currentValue: any, index: number) => {
             return {
               ...acc,
-              [key]: value[key]
+              [index]: currentValue
             };
           }, {});
+        }
 
-        return this.convertObjectToGroup(value);
+        return this.convertObjectToGroup(id.toString(), value).items;
       }
     };
   })();
@@ -376,17 +359,17 @@ export class StiInjector {
       const code: string = `(${createStiScout.toString()})(); stiScout.initializeMap($0)`;
 
       /** Get the current selected element */
-      chrome.devtools.inspectedWindow.eval(code, (map: StiMap) => {
+      chrome.devtools.inspectedWindow.eval(code, (mapData: StiMapData) => {
         this.registrations.forEach((registration: any) => {
-          registration(map);
+          registration(mapData);
         });
       });
 
       /** Bind the selection change listener */
       chrome.devtools.panels.elements.onSelectionChanged.addListener(() => {
-        chrome.devtools.inspectedWindow.eval(code, (map: StiMap) => {
+        chrome.devtools.inspectedWindow.eval(code, (mapData: StiMapData) => {
           this.registrations.forEach((registration: any) => {
-            registration(map);
+            registration(mapData);
           });
         });
       });
@@ -401,23 +384,23 @@ export class StiInjector {
     this.registrations.push(method);
   }
 
-  public expandItem(item: any, entry: StiEntry, callback: any): void {
+  public expandItem(opts: any, item: StiItemData, callback: any): void {
     let {
       isExpanded,
       expandedValue
-    } = item;
+    } = opts;
 
     let waitForEval: boolean = false;
 
-    if (entry.canExpand) {
+    if (item.canExpand) {
       isExpanded = !isExpanded;
 
-      if (isExpanded && !expandedValue) {
-        const code: string = `stiScout.getExpandedValue(${entry.cachingIndex});`;
+      if (isExpanded && expandedValue.length === 0) {
+        const code: string = `stiScout.getExpandedValue(${item.cachingIndex});`;
 
         waitForEval = true;
 
-        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: StiGroupInterface) => {
+        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: StiItemData[]) => {
           expandedValue = newExpandedValue;
 
           callback({
