@@ -3,6 +3,7 @@
 dist/
 node_modules/
 src/components.d.ts
+stencil-inspector/
 www/
 .stylelint-cache
 
@@ -17,3 +18,10 @@ www/
 $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
+
+# Chrome Extension
+certificate/
+stencil-inspector/
+stencil-inspector.crx
+stencil-inspector.pem
+stencil-inspector.zip
