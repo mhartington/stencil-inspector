@@ -11,6 +11,7 @@ export interface StiScout {
   buildProps: (currentCmpType: any, instance: ComponentInstance) => StiGroupData;
   createItem: (partialItem: Partial<StiItemData>, value: any) => StiItemData;
   buildGroupFromInstance: (label: string, currentCmpType: any, instance: ComponentInstance) => StiGroupData;
+  buildListenersGroup: (currentCmpType: any, instance: ComponentInstance) => StiGroupData;
   convertObjectToGroup: (label: string, obj: {}) => StiGroupData;
   initializeMap: (selectedNode: HostElement) => StiMapData;
   getExpandedValue: (id: number) => StiItemData[];

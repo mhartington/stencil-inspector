@@ -109,7 +109,12 @@ createStiScout = (): void => {
               encapsulated = 'unknown';
           }
 
-          const listeners: ComponentListenersData = comp[5] && comp[5][0] ? comp[5][0] : [];
+          const listeners: ComponentListenersData = (comp[5] || []).reduce((listenerAcc: {}, listener: any) => {
+            return {
+              ...listenerAcc,
+              [listener[0]]: listener[1]
+            };
+          }, []);
 
           return {
             ...acc,
@@ -252,6 +257,18 @@ createStiScout = (): void => {
         };
       },
 
+      buildListenersGroup(currentCmpType: any, instance: ComponentInstance): StiGroupData {
+        const items: any = Object.keys(currentCmpType.listeners)
+          .reduce((acc: any[], listenerKey: string) => {
+            return {
+              ...acc,
+              [listenerKey]: instance[currentCmpType.listeners[listenerKey]]
+            };
+          }, {});
+
+        return this.convertObjectToGroup('Listeners', items);
+      },
+
       /** Convert an object into a group of items */
       convertObjectToGroup(label: string, obj: {}, expanded: boolean = true): StiGroupData {
         const keys: string[] = [];
@@ -307,6 +324,7 @@ createStiScout = (): void => {
               map.groups.push(this.buildGroupFromInstance('States', currentCmpType, _instance));
               map.groups.push(this.buildGroupFromInstance('Methods', currentCmpType, _instance));
               map.groups.push(this.buildGroupFromInstance('Elements', currentCmpType, _instance));
+              map.groups.push(this.buildListenersGroup(currentCmpType, _instance));
               map.groups.push(this.convertObjectToGroup('Instance', _instance));
               map.groups.push(this.convertObjectToGroup('Element', _instance.__el, false));
               map.groups.push(this.convertObjectToGroup('Context', (window as any).app.Context));
