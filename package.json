@@ -1,6 +1,6 @@
 {
   "name": "stencil-inspector",
-  "version": "1.0.0",
+  "version": "1.0.1-beta",
   "description": "A Chrome plugin that adds a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.",
   "keywords": [
     "stencil",
@@ -25,6 +25,7 @@
   "scripts": {
     "dev": "stencil build --dev --watch",
     "build": "stencil build",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint": "sd concurrent \"npm run lint:ts\" \"npm run lint:styles\"",
     "lint:ts": "tslint -p tsconfig.json -c tslint.json",
     "lint:styles": "stylelint \"src/**/*.{css,scss,less,pcss}\" --cache --cache-location \"./.stylelint-cache\""
