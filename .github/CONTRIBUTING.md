@@ -25,5 +25,30 @@ Please see the [Contributor Code of Conduct](https://github.com/bfmatei/stencil-
 2. If there is a `*.spec.ts`, update it to include a test for your change, if needed. If this file doesn't exist, please notify me.
 3. Run `npm run test` to make sure all tests are working, regardless if a test was added.
 
+## Commit Message Format
+I personally use the Angular's format: `type(scope): subject`
+
+#### Type
+   * **feat**: A new feature
+   * **fix**: A bug fix
+   * **docs**: Documentation only changes
+   * **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons etc.)
+   * **refactor**: A code change that neither fixes a bug nor adds a feature
+   * **perf**: A code change that improves performance
+   * **test**: Adding missing tests
+   * **chore**: Changes to the build process or auxiliary tools and libraries such as documentation generation
+
+#### Scope
+The scope can be anything specifying place of the commit change.
+
+#### Subject
+The subject contains succinct description of the change:
+   * use the imperative, present tense: "change" not "changed" nor "changes"
+   * do not capitalize first letter
+   * do not place a period `.` at the end
+   * entire length of the commit message must not go over 50 characters
+   * describe what the commit does, not what issue it relates to or fixes
+   * **be brief, yet descriptive** - I should have a good understanding of what the commit does by reading the subject
+
 ## License
 By contributing your code to the bfmatei/stencil-inspector GitHub Repository, you agree to license your contribution under the MIT license.
