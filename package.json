@@ -1,6 +1,6 @@
 {
   "name": "stencil-inspector",
-  "version": "1.0.1-beta",
+  "version": "1.0.1",
   "description": "A Chrome plugin that adds a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.",
   "keywords": [
     "stencil",
