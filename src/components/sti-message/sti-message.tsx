@@ -12,9 +12,13 @@ export class StiMessage {
   @Prop()
   public message: string = '';
 
+  @Prop()
+  public dark: boolean = false;
+
   protected hostData(): JSXElements.StiMessageAttributes {
     return {
       class: {
+        dark: this.dark,
         hidden: this.message.length === 0
       }
     };

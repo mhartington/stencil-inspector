@@ -23,7 +23,10 @@ export class StiItemView {
   public item: StiItemData = null;
 
   @Prop()
-  public darkTheme: boolean = false;
+  public print: boolean = false;
+
+  @Prop()
+  public dark: boolean = false;
 
   @State()
   private isExpanded: boolean = false;
@@ -40,7 +43,7 @@ export class StiItemView {
   protected hostData(): JSXElements.StiItemAttributes {
     return {
       class: {
-        dark: this.darkTheme
+        dark: this.dark
       }
     };
   }
@@ -60,11 +63,13 @@ export class StiItemView {
     }, this.item, this.itemsChangeHandler);
   }
 
+  @autobind
   private renderChild(item: StiItemData): JSX.Element {
     return (
       <sti-item
         item={item}
-        darkTheme={this.darkTheme}
+        print={this.item.type === 'function'}
+        dark={this.dark}
       />
     );
   }
@@ -76,7 +81,10 @@ export class StiItemView {
           this.expandedValue.length > 0 ?
             this.expandedValue.map(this.renderChild) :
             (
-              <sti-message message='Object has no properties.' />
+              <sti-message
+                message='Object has no properties.'
+                dark={this.dark}
+              />
             )
         }
       </div>
@@ -84,6 +92,8 @@ export class StiItemView {
   }
 
   protected render(): JSX.Element[] {
+    const print: string = this.print ? 'print' : '';
+
     return [
       (
         <div class='item'>
@@ -97,10 +107,10 @@ export class StiItemView {
               ) :
               null
           }
-          <div class='name'>
+          <div class={`name ${print}`}>
             {this.item.name}
           </div>
-          <div class={`value ${this.item.type}`}>
+          <div class={`value ${this.item.type} ${print}`}>
             {this.item.value.toString()}
           </div>
         </div>

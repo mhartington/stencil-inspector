@@ -28,7 +28,7 @@ export class StiGroup {
   public info: StiStatusData = null;
 
   @Prop()
-  public darkTheme: boolean = false;
+  public dark: boolean = false;
 
   @State()
   private expanded: boolean = true;
@@ -41,7 +41,7 @@ export class StiGroup {
     return {
       class: {
         expanded: this.expanded,
-        darkTheme: this.darkTheme
+        dark: this.dark
       }
     };
   }
@@ -51,11 +51,12 @@ export class StiGroup {
     this.expanded = !this.expanded;
   }
 
+  @autobind
   private renderChild(item: StiItemData): JSX.Element {
     return (
       <sti-item
         item={item}
-        darkTheme={this.darkTheme}
+        dark={this.dark}
       />
     );
   }
@@ -86,7 +87,10 @@ export class StiGroup {
         {
           actualMessage ?
             (
-              <sti-message message={actualMessage} />
+              <sti-message
+                message={actualMessage}
+                dark={this.dark}
+              />
             ) :
             itemsArr
         }

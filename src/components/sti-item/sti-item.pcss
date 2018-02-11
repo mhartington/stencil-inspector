@@ -22,6 +22,10 @@
         color: rgb(105, 105, 105);
         font-family: monospace;
       }
+
+      &.print {
+        display: none;
+      }
     }
 
     & .value {
@@ -38,13 +42,24 @@
         color: rgb(255, 20, 147);
       }
 
+      &.function {
+        color: rgb(255, 0, 0);
+        white-space: nowrap;
+      }
+
       &.string {
         color: rgb(255, 0, 0);
         white-space: nowrap;
 
-        &:before,
-        &:after {
-          content: '"';
+        &.print {
+          white-space: pre-wrap;
+        }
+
+        &:not(.print) {
+          &:before,
+          &:after {
+            content: '"';
+          }
         }
       }
 
@@ -79,6 +94,7 @@
     }
 
     & .value {
+      &.function,
       &.string,
       &.array,
       &.object {

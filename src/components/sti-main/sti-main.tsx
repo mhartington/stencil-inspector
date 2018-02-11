@@ -28,10 +28,10 @@ export class StiMain {
   };
 
   @State()
-  private isDarkTheme: boolean = false;
+  private dark: boolean = false;
 
   protected componentWillLoad(): void {
-    this.isDarkTheme = chrome && chrome.devtools && chrome.devtools.panels && (chrome.devtools.panels as any).themeName === 'dark';
+    this.dark = chrome && chrome.devtools && chrome.devtools.panels && (chrome.devtools.panels as any).themeName === 'dark';
 
     StiInjector.Instance.register(this.elementInfoChangeHandler);
   }
@@ -44,7 +44,7 @@ export class StiMain {
   protected hostData(): JSXElements.StiMainAttributes {
     return {
       class: {
-        dark: this.isDarkTheme
+        dark: this.dark
       }
     };
   }
@@ -55,7 +55,7 @@ export class StiMain {
       <sti-group
         group={group}
         info={this.mapData.info}
-        darkTheme={this.isDarkTheme}
+        dark={this.dark}
       />
     );
   }
@@ -65,7 +65,7 @@ export class StiMain {
       (
         <sti-logo
           class='logo'
-          darkTheme={this.isDarkTheme}
+          dark={this.dark}
         />
       ),
       this.mapData.groups.length > 0 ?
@@ -73,7 +73,10 @@ export class StiMain {
           (
             !this.mapData.info.success ?
               (
-                <sti-message message={this.mapData.info.message} />
+                <sti-message
+                  message={this.mapData.info.message}
+                  dark={this.dark}
+                />
               ) :
               null
           )

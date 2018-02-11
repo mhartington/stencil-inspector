@@ -10,12 +10,12 @@ import {
 })
 export class StiLogo {
   @Prop()
-  public darkTheme: boolean = false;
+  public dark: boolean = false;
 
   protected hostData(): JSXElements.StiLogoAttributes {
     return {
       class: {
-        dark: this.darkTheme
+        dark: this.dark
       }
     };
   }
