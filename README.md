@@ -2,6 +2,8 @@
 
 Stencil Inspector is a Chrome plugin that adds a new inspector pane to the Elements panel, providing Stencil-specific information about selected elements.
 
+You can inspect any type of data available: nodes, objects, functions, strings etc.
+
 ## Available Inspections
 1. Props
    * name
