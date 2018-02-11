@@ -8,11 +8,8 @@ defaults: &defaults
 build_filters: &build_filters
   filters:
     branches:
-      ignore:
-        - /.*/
-    tags:
       only:
-        - /.*/
+        - master
 
 version: 2
 jobs:
