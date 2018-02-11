@@ -28,7 +28,7 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint": "sd concurrent \"npm run lint:ts\" \"npm run lint:styles\"",
     "lint:ts": "tslint -p tsconfig.json -c tslint.json",
-    "lint:styles": "stylelint \"src/**/*.{css,scss,less,pcss}\" --cache --cache-location \"./.stylelint-cache\""
+    "lint:styles": "stylelint \"src/**/*.pcss\" --cache --cache-location \"./.stylelint-cache\""
   },
   "dependencies": {
     "@stencil/core": "0.4.1"
@@ -44,7 +44,8 @@
     "stylelint": "8.4.0",
     "tslint": "5.9.1",
     "tslint-language-service": "0.9.8",
-    "tslint-react": "3.4.0"
+    "tslint-react": "3.4.0",
+    "typescript": "2.7.1"
   },
   "main": "dist/sti.js",
   "types": "dist/types/index.d.ts",
