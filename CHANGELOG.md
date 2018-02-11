@@ -2,6 +2,11 @@
 ## [1.0.1](https://github.com/bfmatei/stencil-inspector/compare/v1.0.0...v1.0.1) (2018-02-11)
 
 
+### Bug Fixes
+
+* **styles:** proper handling of the boxes when sidebars are visible ([cc77268](https://github.com/bfmatei/stencil-inspector/commit/cc77268))
+
+
 ### Features
 
 * **components:** improve how components are printed ([639fc35](https://github.com/bfmatei/stencil-inspector/commit/639fc35))
