@@ -33,9 +33,9 @@ createStiScout = (): void => {
       buildComponentsMembers(receivedMembers: any[] = []): any {
         const members: any = {
           props: {},
-          states: {},
-          methods: {},
-          elements: {}
+          states: [],
+          methods: [],
+          elements: []
         };
 
         const categories: any = {
@@ -57,22 +57,18 @@ createStiScout = (): void => {
 
           const category: string = categories[typeValue];
 
-          let value: any = {
-            name,
-            isObserved,
-            controller
-          };
-
           if (typeValue >= 1 && typeValue <= 4) {
-            value = {
-              ...value,
+            members[category][name] = {
+              name,
+              isObserved,
+              controller,
               isMutable: typeValue === 2,
               isContextProp: typeValue === 3,
               isConnectProp: typeValue === 4
             };
+          } else {
+            members[category].push(name);
           }
-
-          members[category][name] = value;
         });
 
         return members;
@@ -248,12 +244,11 @@ createStiScout = (): void => {
         return {
           label,
           expanded: true,
-          items: Object.keys(currentCmpType[key])
-            .map((propName: string): any => {
-              return this.createItem({
-                name: propName
-              }, instance[propName]);
-            })
+          items: currentCmpType[key].map((propName: string): any => {
+            return this.createItem({
+              name: propName
+            }, instance[propName]);
+          })
         };
       },
 
