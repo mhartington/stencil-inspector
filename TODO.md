@@ -6,5 +6,6 @@
 - [ ] Re-implement the instance view
 
 ## Future
+- [ ] Implement unit testing
 - [ ] Implement dependency graph
 - [ ] Refactor the scout
