@@ -3,11 +3,8 @@ module.exports = function (config) {
 
   return {
     name: 'postcss-loader',
-    usePlugin(id) {
-      return /(.css|.pcss)$/i.test(id);
-    },
     async transform(sourceText, id, context) {
-      if (!this.usePlugin(id)) {
+      if (/(.css|.pcss)$/i.test(id)) {
         return null;
       }
 

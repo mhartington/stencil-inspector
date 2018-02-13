@@ -1,7 +1,8 @@
 # TODO
 
 ## v1.0.2
-- [ ] Follow the changelog for TSLint and tslint-react
+- [x] Follow the changelog for TSLint and tslint-react
+- [x] Update Stencil package
 - [ ] Retrieve information about uncaught errors
 - [ ] Re-implement the instance view
 
