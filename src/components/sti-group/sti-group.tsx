@@ -5,11 +5,6 @@ import {
 } from '@stencil/core';
 
 import autobind from '~decorators/autobind';
-import {
-  StiGroupData,
-  StiItemData,
-  StiStatusData
-} from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-group',
@@ -18,14 +13,14 @@ import {
 })
 export class StiGroup {
   @Prop()
-  public group: StiGroupData = {
+  public group: any = {
     label: '',
     items: [],
     expanded: true
   };
 
   @Prop()
-  public info: StiStatusData = null;
+  public info: any = null;
 
   @Prop()
   public dark: boolean = false;
@@ -52,7 +47,7 @@ export class StiGroup {
   }
 
   @autobind
-  private renderChild(item: StiItemData): JSX.Element {
+  private renderChild(item: any): JSX.Element {
     return (
       <sti-item
         item={item}

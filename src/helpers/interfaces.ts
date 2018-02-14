@@ -1,27 +1,64 @@
-import {
-  ComponentInstance
-} from '@stencil/core/dist/declarations';
-import {
-  HostElement
-} from '@stencil/core/dist/declarations/component';
-
-export interface StiScout {
-  buildComponentsMembers: (receivedMembers: any[]) => any;
-  buildComponentsDetails: () => any;
-  buildProps: (currentCmpType: any, instance: ComponentInstance) => StiGroupData;
-  createItem: (partialItem: Partial<StiItemData>, value: any) => StiItemData;
-  buildGroupFromInstance: (label: string, currentCmpType: any, instance: ComponentInstance) => StiGroupData;
-  buildListenersGroup: (currentCmpType: any, instance: ComponentInstance) => StiGroupData;
-  convertObjectToGroup: (label: string, obj: {}) => StiGroupData;
-  initializeMap: (selectedNode: HostElement) => StiMapData;
-  getExpandedValue: (id: number) => StiItemData[];
+export interface StiCacheObject {
+  cacheIndex: number;
+  expandableValue: any;
 }
 
-export type CreateStiScout = () => void;
+export interface StiCacheMap {
+  [label: string]: StiCacheObject;
+}
 
-export interface StiStatusData {
+export interface StiStatus {
   success: boolean;
   message: string;
+}
+
+export interface StiPropModel {
+  name: string;
+  isObserved: boolean;
+  controller: string;
+  isMutable: boolean;
+  isContextProp: boolean;
+  isConnectProp: boolean;
+}
+
+export interface StiProps {
+  [label: string]: StiPropModel;
+}
+
+export interface StiMembers {
+  props: StiProps;
+  states: string[];
+  methods: string[];
+  elements: string[];
+}
+
+export interface StiListener {
+  method: string;
+  event: string;
+  capture: number;
+  passive: number;
+  enabled: number;
+  body?: any;
+}
+
+export interface StiListeners {
+  [listener: string]: StiListener;
+}
+
+export interface StiDefinedComponent {
+  tag: string;
+  bundle: string;
+  hasStyles: boolean;
+  encapsulated: string;
+  props: StiProps;
+  states: string[];
+  methods: string[];
+  elements: string[];
+  listeners: StiListeners;
+}
+
+export interface StiDefinedComponents {
+  [tag: string]: StiDefinedComponent;
 }
 
 export interface StiItemData {
@@ -29,25 +66,25 @@ export interface StiItemData {
   canExpand: boolean;
   type: string;
   value: string;
-  expandedValue: StiGroupData;
-  cachingIndex: number;
+  cacheIndex: number;
 }
 
-export interface StiGroupData {
+export interface StiCategory {
   label: string;
   expanded: boolean;
   items: StiItemData[];
 }
 
-export interface StiMapData {
-  info: StiStatusData;
-  groups: StiGroupData[];
+export interface StiCategories {
+  props: StiCategory;
+  states: StiCategory;
+  methods: StiCategory;
+  elements: StiCategory;
+  listeners: StiCategory;
+  instance: StiCategory;
 }
 
-declare global {
-  interface Window {
-    stiScout: StiScout;
-  }
-
-  var createStiScout: CreateStiScout;
+export interface StiMapData {
+  status: StiStatus;
+  categories: StiCategories;
 }

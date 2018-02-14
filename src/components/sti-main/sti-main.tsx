@@ -7,10 +7,6 @@ import autobind from '~decorators/autobind';
 import {
   StiInjector
 } from '~helpers/injector';
-import {
-  StiGroupData,
-  StiMapData
-} from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-main',
@@ -19,7 +15,7 @@ import {
 })
 export class StiMain {
   @State()
-  private mapData: StiMapData = {
+  private mapData: any = {
     info: {
       success: false,
       message: 'Loading...'
@@ -37,7 +33,7 @@ export class StiMain {
   }
 
   @autobind
-  private elementInfoChangeHandler(mapData: StiMapData): void {
+  private elementInfoChangeHandler(mapData: any): void {
     this.mapData = mapData;
   }
 
@@ -50,7 +46,7 @@ export class StiMain {
   }
 
   @autobind
-  private renderGroup(group: StiGroupData): JSX.Element {
+  private renderGroup(group: any): JSX.Element {
     return (
       <sti-group
         group={group}
