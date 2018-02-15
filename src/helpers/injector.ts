@@ -1,38 +1,21 @@
-import {
-  StiItemData,
-  StiMapData
-} from '~helpers/interfaces';
+import autobind from '~decorators/autobind';
 
 import {
+  StiComponent,
+  StiItemData
+} from './interfaces';
+import {
   createScout
-} from '../scout/scout';
+} from './scout';
 
 export class StiInjector {
   private static _instance: StiInjector;
 
-  private registrations: any[] = [];
+  private mainInstances: any[] = [];
 
   private constructor() {
     if (chrome && chrome.devtools) {
-      chrome.devtools.inspectedWindow.eval(`(${createScout.toString()})()`);
-
-      const code: string = `stiScout.initializeMap($0)`;
-
-      /** Get the current selected element */
-      chrome.devtools.inspectedWindow.eval(code, (mapData: StiMapData) => {
-        this.registrations.forEach((registration: any) => {
-          registration(mapData);
-        });
-      });
-
-      /** Bind the selection change listener */
-      chrome.devtools.panels.elements.onSelectionChanged.addListener(() => {
-        chrome.devtools.inspectedWindow.eval(code, (mapData: StiMapData) => {
-          this.registrations.forEach((registration: any) => {
-            registration(mapData);
-          });
-        });
-      });
+      this.injectScout();
     }
   }
 
@@ -40,8 +23,51 @@ export class StiInjector {
     return this._instance || (this._instance = new this());
   }
 
-  public register(method: any): void {
-    this.registrations.push(method);
+  @autobind
+  private injectScout(): void {
+    chrome.devtools.inspectedWindow.eval(
+      `(${createScout.toString()})()`,
+      () => {
+        this.getNamespace();
+
+        chrome.devtools.panels.elements.onSelectionChanged.addListener(this.getComponent);
+        chrome.devtools.network.onNavigated.addListener(this.networkNavigateHandler);
+      }
+    );
+  }
+
+  private getNamespace(): void {
+    chrome.devtools.inspectedWindow.eval(
+      'stiScout.getNamespace()',
+      (mapData: any): void => {
+        (this.mainInstances || []).forEach((instance: any) => {
+          instance.changeNamespace(mapData);
+        });
+
+        this.getComponent();
+      });
+  }
+
+  @autobind
+  private getComponent(): void {
+    chrome.devtools.inspectedWindow.eval(
+      'stiScout.changeElement($0)',
+      (component: StiComponent): void => {
+        (this.mainInstances || []).forEach((instance: any) => {
+          instance.changeComponent(component);
+        });
+      });
+  }
+
+  @autobind
+  private networkNavigateHandler(): void {
+    chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
+
+    this.injectScout();
+  }
+
+  public register(mainInstance: any): void {
+    this.mainInstances.push(mainInstance);
   }
 
   public expandItem(opts: any, item: StiItemData, callback: any): void {

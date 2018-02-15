@@ -14,7 +14,7 @@
     padding: 4px;
     box-sizing: border-box;
     background: rgb(244, 244, 244);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    border-bottom: 0 solid rgba(0, 0, 0, 0.25);
     border-top: 1px solid rgba(0, 0, 0, 0.25);
   }
 
@@ -28,9 +28,10 @@
   }
 }
 
-:host(:not(:last-child):not(.expanded)) {
+:host(:last-of-type),
+:host(.expanded) {
   & .header {
-    border-bottom: 0;
+    border-bottom-width: 1px;
   }
 }
 

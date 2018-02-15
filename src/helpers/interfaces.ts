@@ -1,3 +1,11 @@
+export interface StiEnum {
+ [index: number]: string;
+}
+
+export interface StiAppContext {
+  [label: string]: any;
+}
+
 export interface StiCacheObject {
   cacheIndex: number;
   expandableValue: any;
@@ -84,7 +92,13 @@ export interface StiCategories {
   instance: StiCategory;
 }
 
-export interface StiMapData {
+export interface StiNamespace {
+  status: StiStatus;
+  context: StiCategory;
+  components: StiCategory;
+}
+
+export interface StiComponent {
   status: StiStatus;
   categories: StiCategories;
 }

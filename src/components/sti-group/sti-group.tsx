@@ -5,6 +5,9 @@ import {
 } from '@stencil/core';
 
 import autobind from '~decorators/autobind';
+import {
+  StiCategory
+} from '~helpers/interfaces';
 
 @Component({
   tag: 'sti-group',
@@ -13,7 +16,7 @@ import autobind from '~decorators/autobind';
 })
 export class StiGroup {
   @Prop()
-  public group: any = {
+  public group: StiCategory = {
     label: '',
     items: [],
     expanded: true
