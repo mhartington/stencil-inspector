@@ -10,6 +10,7 @@ import {
   StiInjector
 } from '~helpers/injector';
 import {
+  StiExpandPayload,
   StiItemData
 } from '~helpers/interfaces';
 
@@ -49,7 +50,7 @@ export class StiItemView {
   }
 
   @autobind
-  private itemsChangeHandler(newItem: { isExpanded: boolean; expandedValue: StiItemData[] }): void {
+  private itemsChangeHandler(newItem: StiExpandPayload): void {
     this.isExpanded = newItem.isExpanded;
 
     this.expandedValue = newItem.expandedValue;
@@ -103,6 +104,7 @@ export class StiItemView {
                 <sti-arrow
                   direction={this.isExpanded}
                   onClick={this.arrowClickHandler}
+                  class='arrow'
                 />
               ) :
               null

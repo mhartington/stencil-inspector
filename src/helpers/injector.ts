@@ -1,7 +1,11 @@
 import autobind from '~decorators/autobind';
+import {
+  StiExpandPayload,
+  StiNamespaceData
+} from '~helpers/interfaces';
 
 import {
-  StiComponent,
+  StiComponentData,
   StiItemData
 } from './interfaces';
 import {
@@ -15,7 +19,7 @@ export class StiInjector {
 
   private constructor() {
     if (chrome && chrome.devtools) {
-      this.injectScout();
+      this.injectScout(true);
     }
   }
 
@@ -24,9 +28,9 @@ export class StiInjector {
   }
 
   @autobind
-  private injectScout(): void {
+  private injectScout(overwrite: boolean = true): void {
     chrome.devtools.inspectedWindow.eval(
-      `(${createScout.toString()})()`,
+      `(${createScout.toString()})(${overwrite})`,
       () => {
         this.getNamespace();
 
@@ -39,9 +43,11 @@ export class StiInjector {
   private getNamespace(): void {
     chrome.devtools.inspectedWindow.eval(
       'stiScout.getNamespace()',
-      (mapData: any): void => {
+      (namespace: string): void => {
+        const parsedData: StiNamespaceData = JSON.parse(namespace);
+
         (this.mainInstances || []).forEach((instance: any) => {
-          instance.changeNamespace(mapData);
+          instance.changeNamespace(parsedData);
         });
 
         this.getComponent();
@@ -52,28 +58,34 @@ export class StiInjector {
   private getComponent(): void {
     chrome.devtools.inspectedWindow.eval(
       'stiScout.changeElement($0)',
-      (component: StiComponent): void => {
+      (component: string): void => {
+        const parsedData: StiComponentData = JSON.parse(component);
+
         (this.mainInstances || []).forEach((instance: any) => {
-          instance.changeComponent(component);
+          instance.changeComponent(parsedData);
         });
       });
   }
 
   @autobind
   private networkNavigateHandler(): void {
-    chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
-
-    this.injectScout();
+    window.location.reload();
+    // chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
+    //
+    // this.injectScout(false);
   }
 
   public register(mainInstance: any): void {
     this.mainInstances.push(mainInstance);
   }
 
-  public expandItem(opts: any, item: StiItemData, callback: any): void {
-    let {
-      isExpanded,
+  public expandItem(opts: StiExpandPayload, item: StiItemData, callback: (newItem: StiExpandPayload) => void): void {
+    const {
       expandedValue
+    } = opts;
+
+    let {
+      isExpanded
     } = opts;
 
     let waitForEval: boolean = false;
@@ -86,11 +98,9 @@ export class StiInjector {
 
         waitForEval = true;
 
-        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: StiItemData[]) => {
-          expandedValue = newExpandedValue;
-
+        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: string) => {
           callback({
-            expandedValue: newExpandedValue,
+            expandedValue: JSON.parse(newExpandedValue),
             isExpanded: true
           });
         });

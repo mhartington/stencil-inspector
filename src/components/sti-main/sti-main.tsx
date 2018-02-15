@@ -8,9 +8,8 @@ import {
   StiInjector
 } from '~helpers/injector';
 import {
-  StiComponent,
-  StiNamespace,
-  StiStatus
+  StiComponentData,
+  StiNamespaceData
 } from '~helpers/interfaces';
 
 @Component({
@@ -20,23 +19,10 @@ import {
 })
 export class StiMain {
   @State()
-  private namespace: StiNamespace = {
-    status: {
-      success: false,
-      message: 'Loading...'
-    },
-    context: null,
-    components: null
-  };
+  private namespace: StiNamespaceData = null;
 
   @State()
-  private component: StiComponent = {
-    status: {
-      success: false,
-      message: 'Loading...'
-    },
-    categories: null
-  };
+  private component: StiComponentData = null;
 
   @State()
   private dark: boolean = false;
@@ -48,12 +34,12 @@ export class StiMain {
   }
 
   @autobind
-  public changeNamespace(namespace: StiNamespace): void {
+  public changeNamespace(namespace: StiNamespaceData): void {
     this.namespace = namespace;
   }
 
   @autobind
-  public changeComponent(component: StiComponent): void {
+  public changeComponent(component: StiComponentData): void {
     this.component = component;
   }
 
@@ -66,78 +52,31 @@ export class StiMain {
   }
 
   private renderContent(): JSX.Element | JSX.Element[] {
-    if (!this.namespace.status.success) {
+    const validNamespace: boolean = this.namespace !== null;
+    const validComponent: boolean = this.component !== null;
+
+    if (!validNamespace && !validComponent) {
       return (
         <sti-message
-          message={this.namespace.status.message}
+          message='Loading...'
           dark={this.dark}
         />
       );
     }
 
-    const componentStatus: StiStatus = !this.namespace.status.success ?
-      this.namespace.status :
-      this.component.status;
-
     return [
-      [
-        (
-          <sti-group
-            group={this.component.categories.props}
-            info={componentStatus}
-            dark={this.dark}
-          />
-        ),
-        (
-          <sti-group
-            group={this.component.categories.states}
-            info={componentStatus}
-            dark={this.dark}
-          />
-        ),
-        (
-          <sti-group
-            group={this.component.categories.elements}
-            info={componentStatus}
-            dark={this.dark}
-          />
-        ),
-        (
-          <sti-group
-            group={this.component.categories.methods}
-            info={componentStatus}
-            dark={this.dark}
-          />
-        ),
-        (
-          <sti-group
-            group={this.component.categories.listeners}
-            info={componentStatus}
-            dark={this.dark}
-          />
-        ),
-        (
-          <sti-group
-            group={this.component.categories.instance}
-            info={componentStatus}
-            dark={this.dark}
-          />
-        )
-      ],
-      this.namespace.components && (
+      validComponent !== null ? (
         <sti-group
-          group={this.namespace.context}
-          info={this.namespace.status}
+          group={this.component}
           dark={this.dark}
         />
-      ),
-      this.namespace.context && (
+      ) : null,
+      validNamespace !== null ? (
         <sti-group
-          group={this.namespace.components}
-          info={this.namespace.status}
+          group={this.namespace}
           dark={this.dark}
         />
-      )
+      ) : null
     ];
   }
 

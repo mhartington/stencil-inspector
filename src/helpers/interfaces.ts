@@ -77,28 +77,41 @@ export interface StiItemData {
   cacheIndex: number;
 }
 
-export interface StiCategory {
+export interface StiCategoryData {
   label: string;
   expanded: boolean;
   items: StiItemData[];
 }
 
-export interface StiCategories {
-  props: StiCategory;
-  states: StiCategory;
-  methods: StiCategory;
-  elements: StiCategory;
-  listeners: StiCategory;
-  instance: StiCategory;
+export interface StiComponentCategories {
+  props: StiCategoryData;
+  states: StiCategoryData;
+  methods: StiCategoryData;
+  elements: StiCategoryData;
+  listeners: StiCategoryData;
+  instance: StiCategoryData;
 }
 
-export interface StiNamespace {
+export interface StiComponentData {
+  label: string;
   status: StiStatus;
-  context: StiCategory;
-  components: StiCategory;
+  categories: StiComponentCategories;
 }
 
-export interface StiComponent {
+export interface StiNamespaceCategories {
+  components: StiCategoryData;
+  context: StiCategoryData;
+}
+
+export interface StiNamespaceData {
+  label: string;
   status: StiStatus;
-  categories: StiCategories;
+  categories: StiNamespaceCategories;
+}
+
+export type StiGroupData = StiComponentData | StiNamespaceData;
+
+export interface StiExpandPayload {
+  isExpanded: boolean;
+  expandedValue: StiItemData[];
 }

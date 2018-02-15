@@ -1,4 +1,5 @@
 import {
+  AppGlobal,
   ComponentInstance,
   LoadComponentRegistry
 } from '@stencil/core/dist/declarations';
@@ -11,8 +12,8 @@ import {
 import {
   StiAppContext,
   StiCacheMap,
-  StiCategories,
-  StiComponent,
+  StiComponentCategories,
+  StiComponentData,
   StiDefinedComponent,
   StiDefinedComponents,
   StiEnum,
@@ -23,9 +24,13 @@ import {
   StiStatus
 } from '~helpers/interfaces';
 
+// tslint:disable:typedef
+
 /** Yeah, I know this looks messy. I tried to transform this in a class but well, Chrome... */
-export const createScout: () => void = (): void => {
-  if (!('stiScout' in window)) {
+export const createScout: (overwrite: boolean) => void = (overwrite: boolean): void => {
+  if (overwrite || !(window as any).stiScout) {
+    (window as any).stiScout = undefined;
+
     ((): void => {
       const encapsulations: StiEnum = {
         0: 'No',
@@ -52,7 +57,7 @@ export const createScout: () => void = (): void => {
         message: 'Loading...'
       };
 
-      let namespace: any = null;
+      let namespace: AppGlobal = null;
 
       let node: HostElement = null;
 
@@ -64,19 +69,19 @@ export const createScout: () => void = (): void => {
 
       let componentInstance: ComponentInstance = null;
 
-      let componentData: StiComponent = null;
+      let componentData: StiComponentData = null;
 
       /**
        * Global Helper Methods
        */
 
       /** Increment the caching index and retrieve it */
-      const getNewCacheIndex: any = (): number => {
+      const getNewCacheIndex = (): number => {
         return ++cacheIndex;
       };
 
       /** Create an item */
-      const createItem: any = (partialItem: Partial<StiItemData>, value: any): StiItemData => {
+      const createItem = (partialItem: Partial<StiItemData>, value: any): StiItemData => {
         try {
           let expandableValue: any;
 
@@ -142,7 +147,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Helper for creating items */
-      const itemMapper: any = (obj: {}): (name: string) => StiItemData => {
+      const itemMapper = (obj: {}): (name: string) => StiItemData => {
         return (name: string): StiItemData => {
           return createItem({
             name
@@ -151,7 +156,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Convert an object into a group of items */
-      const parseItemsFromObject: any = (obj: {} | any[]): StiItemData[] => {
+      const parseItemsFromObject = (obj: {} | any[]): StiItemData[] => {
         const keys: string[] = [];
 
         for (const key in obj) {
@@ -164,7 +169,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Convert an array into object */
-      const convertArrayToObj: any = (obj: {}, currentValue: any, index: number): {} => {
+      const convertArrayToObj = (obj: {}, currentValue: any, index: number): {} => {
         return {
           ...obj,
           [index]: currentValue
@@ -176,7 +181,7 @@ export const createScout: () => void = (): void => {
        */
 
       /** Check if a given prop is the namespace we are looking for */
-      const checkWindowProp: any = (propKey: string): boolean => {
+      const checkWindowProp = (propKey: string): boolean => {
         const propValue: any = window[propKey];
 
         return (
@@ -189,7 +194,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Find the namespace */
-      const findNamespaceObject: any = (): void => {
+      const findNamespaceObject = (): void => {
         // TODO: implement an array in the settings page to check for them first in order to improve performance
 
         /** First of all check the default namespace as most of the people are not changing this */
@@ -207,7 +212,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Read each component member data */
-      const parseMembersData: any = (members: StiMembers, member: ComponentMemberData): StiMembers => {
+      const parseMembersData = (members: StiMembers, member: ComponentMemberData): StiMembers => {
         const name: string = member[0] || 'unknown';
         const type: number = member[1] || 0;
         const category: string = memberTypes[type];
@@ -234,7 +239,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Read each listener data */
-      const parseListenerData: any = (listeners: StiListeners, listener: ComponentListenersData): StiListeners => {
+      const parseListenerData = (listeners: StiListeners, listener: ComponentListenersData): StiListeners => {
         return {
           ...listeners,
           [listener[0]]: {
@@ -248,7 +253,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Read every defined component */
-      const parseDefinedComponents: any = (definedComponents: StiDefinedComponents, component: LoadComponentRegistry): StiDefinedComponents => {
+      const parseDefinedComponents = (definedComponents: StiDefinedComponents, component: LoadComponentRegistry): StiDefinedComponents => {
         const tag: string = component[0] || 'unknown';
         const bundle: string = (component[1] as any) || 'unknown';
         const hasStyles: boolean = !!component[2] || false;
@@ -282,14 +287,14 @@ export const createScout: () => void = (): void => {
        */
 
       /** Check if the current key is an instance */
-      const filterNodeKeys: any = (key: string): boolean => {
+      const filterNodeKeys = (key: string): boolean => {
         const obj: any = node[key];
 
         return obj && typeof obj === 'object' && typeof obj.render === 'function';
       };
 
       /** Find the instance object when production mode is active */
-      const findInstanceObject: any = (currentNode: HostElement): ComponentInstance => {
+      const findInstanceObject = (currentNode: HostElement): ComponentInstance => {
         const key: string = Object
           .keys(currentNode)
           .filter(filterNodeKeys)
@@ -298,7 +303,7 @@ export const createScout: () => void = (): void => {
         return key ? currentNode[key] : null;
       };
 
-      const parseComponentProp: any = (propName: string): StiItemData => {
+      const parseComponentProp = (propName: string): StiItemData => {
         const instance: ComponentInstance = componentInstance;
 
         const returnObj: Partial<StiItemData> = {
@@ -338,19 +343,19 @@ export const createScout: () => void = (): void => {
       };
 
       /** Read the current component props */
-      const parseComponentProps: any = (): StiItemData[] => {
+      const parseComponentProps = (): StiItemData[] => {
         return Object
           .keys(componentMap.props)
           .map(parseComponentProp);
       };
 
       /** Read the values for some of the categories */
-      const parseItemsFromInstance: any = (key: string): StiItemData[] => {
+      const parseItemsFromInstance = (key: string): StiItemData[] => {
         return componentMap[key].map(itemMapper(componentInstance));
       };
 
       /** Map the values defined in the namespace */
-      const mapListenerValue: any = (key: string): StiListener => {
+      const mapListenerValue = (key: string): StiListener => {
         return {
           ...componentMap.listeners[key],
           body: componentInstance[componentMap.listeners[key].method]
@@ -358,7 +363,7 @@ export const createScout: () => void = (): void => {
       };
 
       /** Read the listeners of a component */
-      const parseComponentListeners: any = (): StiItemData[] => {
+      const parseComponentListeners = (): StiItemData[] => {
         const listeners: StiListener[] = Object
           .keys(componentMap.listeners)
           .map(mapListenerValue);
@@ -367,13 +372,13 @@ export const createScout: () => void = (): void => {
       };
 
       /** Read the component data */
-      const parseComponentData: any = (selectedNode: HTMLElement | HostElement): StiComponent => {
+      const parseComponentData = (selectedNode: HTMLElement | HostElement): StiComponentData => {
         const componentStatus: StiStatus = {
           success: false,
           message: 'Loading...'
         };
 
-        const categories: StiCategories = {
+        const categories: StiComponentCategories = {
           props: {
             label: 'Props',
             expanded: true,
@@ -448,6 +453,7 @@ export const createScout: () => void = (): void => {
         }
 
         return {
+          label: 'Component Details',
           status: componentStatus,
           categories
         };
@@ -455,7 +461,7 @@ export const createScout: () => void = (): void => {
 
       (window as any).stiScout = {
         /** Get the parsed namespace data */
-        getNamespace: (): any => {
+        getNamespace: (): string => {
           findNamespaceObject();
 
           if (namespace !== null) {
@@ -469,41 +475,82 @@ export const createScout: () => void = (): void => {
             status.message = 'Could not detect the namespace object';
           }
 
-          return {
-            status,
-            components: {
-              label: 'Components',
-              expanded: false,
-              items: parseItemsFromObject(components)
-            },
-            context: {
-              label: 'Context',
-              expanded: false,
-              items: parseItemsFromObject(context)
-            }
-          };
+          let response: string = '{}';
+
+          try {
+            response = JSON.stringify({
+              label: 'Global Details',
+              status,
+              categories: {
+                components: {
+                  label: 'Components',
+                  expanded: false,
+                  items: parseItemsFromObject(components)
+                },
+                context: {
+                  label: 'Context',
+                  expanded: false,
+                  items: parseItemsFromObject(context)
+                }
+              }
+            });
+          } catch (e) {
+            response = JSON.stringify({
+              label: 'Global Details',
+              status: {
+                success: false,
+                message: 'Could not stringify the response'
+              },
+              categories: {}
+            });
+          }
+
+          return response;
         },
 
         /** Change element */
-        changeElement: (selectedNode: HTMLElement | HostElement): StiComponent => {
+        changeElement: (selectedNode: HTMLElement | HostElement): string => {
           if (selectedNode !== node) {
             node = selectedNode as HostElement;
 
             componentData = parseComponentData(selectedNode);
           }
 
-          return componentData;
+          let response: string = '{}';
+
+          try {
+            response = JSON.stringify(componentData);
+          } catch (e) {
+            response = JSON.stringify({
+              label: 'Component Details',
+              status: {
+                success: false,
+                message: 'Could not stringify the response'
+              },
+              categories: {}
+            });
+          }
+
+          return response;
         },
 
         /** Read the expanded value data */
-        getExpandedValue: (id: number): StiItemData[] => {
+        getExpandedValue: (id: number): string => {
           let value: any = cacheMap[id].expandableValue;
 
           if (Array.isArray(value)) {
             value = value.reduce(convertArrayToObj, {});
           }
 
-          return parseItemsFromObject(value);
+          let response: string = '{}';
+
+          try {
+            response = JSON.stringify(parseItemsFromObject(value));
+          } catch (e) {
+            response = '{}';
+          }
+
+          return response;
         }
       };
     })();

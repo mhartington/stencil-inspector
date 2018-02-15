@@ -9,9 +9,11 @@
    - Ability to run for production apps
    - Autodetect the namespace object
    - Improve overall performance
-- [ ] Refactor the interface
+- [x] Refactor the interface
+- [ ] Test
 
 ## Future
 - [ ] Re-implement the instance view
+- [ ] Implement props editing
 - [ ] Implement unit testing
 - [ ] Implement dependency graph
