@@ -1,3 +1,22 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/bfmatei/stencil-inspector/compare/v1.0.1...v1.1.0) (2018-02-15)
+
+
+### Features
+
+* ability to inspect production apps
+* autodetect the namespace
+* component information and global information have been separated
+
+### Improvements
+
+* increase the stability
+* optimise the performance
+* give more details about possible hangs
+* improve the future development  
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/bfmatei/stencil-inspector/compare/v1.0.0...v1.0.1) (2018-02-11)
 
