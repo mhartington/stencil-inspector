@@ -217,22 +217,24 @@ export const createScout: (overwrite: boolean) => void = (overwrite: boolean): v
         const type: number = member[1] || 0;
         const category: string = memberTypes[type];
 
-        /** Here we have props */
-        if (type >= 1 && type <= 4) {
-          const isObserved: boolean = !!member[2] || false;
-          const controller: string = member[4] || '';
+        if (category) {
+          /** Here we have props */
+          if (type >= 1 && type <= 4) {
+            const isObserved: boolean = !!member[2] || false;
+            const controller: string = member[4] || '';
 
-          members[category][name] = {
-            name,
-            isObserved,
-            controller,
-            isMutable: type === 2,
-            isContextProp: type === 3,
-            isConnectProp: type === 4
-          };
-        } else {
-          /** While here we have the rest of the members */
-          members[category].push(name);
+            members[category][name] = {
+              name,
+              isObserved,
+              controller,
+              isMutable: type === 2,
+              isContextProp: type === 3,
+              isConnectProp: type === 4
+            };
+          } else {
+            /** While here we have the rest of the members */
+            members[category].push(name);
+          }
         }
 
         return members;

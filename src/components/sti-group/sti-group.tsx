@@ -65,7 +65,7 @@ export class StiGroup {
     if (!success) {
       actualMessage = message || 'Unknown Error';
     } else if (itemsKeys.length === 0) {
-      actualMessage = `${this.group.label} not no items`;
+      actualMessage = `${this.group.label} has no items`;
     }
 
     return actualMessage ?
@@ -93,6 +93,7 @@ export class StiGroup {
           <div class='label'>
             {this.group.label}
           </div>
+          <sti-refresh />
         </h2>
       ),
       this.renderChildList()

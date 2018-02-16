@@ -7,6 +7,7 @@
 * ability to inspect production apps
 * autodetect the namespace
 * component information and global information have been separated
+* add refresh button
 
 ### Improvements
 

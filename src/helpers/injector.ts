@@ -30,7 +30,7 @@ export class StiInjector {
   @autobind
   private injectScout(overwrite: boolean = true): void {
     chrome.devtools.inspectedWindow.eval(
-      `(${createScout.toString()})(${overwrite})`,
+      `(${createScout.toString()})(${overwrite.toString()})`,
       () => {
         this.getNamespace();
 
@@ -40,11 +40,30 @@ export class StiInjector {
     );
   }
 
+  private parseResponse(response: string, key: string): any {
+    let parsedResponse: any;
+
+    try {
+      parsedResponse = JSON.parse(response);
+    } catch (e) {
+      parsedResponse = {
+        label: key,
+        status: {
+          success: false,
+          message: 'Could not fetch the data'
+        },
+        categories: {}
+      };
+    }
+
+    return parsedResponse;
+  }
+
   private getNamespace(): void {
     chrome.devtools.inspectedWindow.eval(
       'stiScout.getNamespace()',
       (namespace: string): void => {
-        const parsedData: StiNamespaceData = JSON.parse(namespace);
+        const parsedData: StiNamespaceData = this.parseResponse(namespace, 'Global Details');
 
         (this.mainInstances || []).forEach((instance: any) => {
           instance.changeNamespace(parsedData);
@@ -59,7 +78,7 @@ export class StiInjector {
     chrome.devtools.inspectedWindow.eval(
       'stiScout.changeElement($0)',
       (component: string): void => {
-        const parsedData: StiComponentData = JSON.parse(component);
+        const parsedData: StiComponentData = this.parseResponse(component, 'Component Details');
 
         (this.mainInstances || []).forEach((instance: any) => {
           instance.changeComponent(parsedData);
@@ -69,10 +88,9 @@ export class StiInjector {
 
   @autobind
   private networkNavigateHandler(): void {
-    window.location.reload();
-    // chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
-    //
-    // this.injectScout(false);
+    chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
+
+    this.injectScout(true);
   }
 
   public register(mainInstance: any): void {
@@ -94,16 +112,17 @@ export class StiInjector {
       isExpanded = !isExpanded;
 
       if (isExpanded && expandedValue.length === 0) {
-        const code: string = `stiScout.getExpandedValue(${item.cacheIndex});`;
-
         waitForEval = true;
 
-        chrome.devtools.inspectedWindow.eval(code, (newExpandedValue: string) => {
-          callback({
-            expandedValue: JSON.parse(newExpandedValue),
-            isExpanded: true
-          });
-        });
+        chrome.devtools.inspectedWindow.eval(
+          `stiScout.getExpandedValue(${item.cacheIndex});`,
+          (newExpandedValue: string) => {
+            callback({
+              expandedValue: JSON.parse(newExpandedValue),
+              isExpanded: true
+            });
+          }
+        );
       }
 
       if (!waitForEval) {
@@ -113,5 +132,11 @@ export class StiInjector {
         });
       }
     }
+  }
+
+  public refresh(): void {
+    chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
+
+    this.injectScout(true);
   }
 }

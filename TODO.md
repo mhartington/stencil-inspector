@@ -10,7 +10,7 @@
    - Autodetect the namespace object
    - Improve overall performance
 - [x] Refactor the interface
-- [ ] Test
+- [x] Add refresh button
 
 ## Future
 - [ ] Re-implement the instance view
