@@ -8,8 +8,8 @@ import {
   StiInjector
 } from '~helpers/injector';
 import {
-  StiGroupData,
-  StiMapData
+  StiComponentData,
+  StiNamespaceData
 } from '~helpers/interfaces';
 
 @Component({
@@ -19,13 +19,10 @@ import {
 })
 export class StiMain {
   @State()
-  private mapData: StiMapData = {
-    info: {
-      success: false,
-      message: 'Loading...'
-    },
-    groups: []
-  };
+  private namespace: StiNamespaceData = null;
+
+  @State()
+  private component: StiComponentData = null;
 
   @State()
   private dark: boolean = false;
@@ -33,12 +30,17 @@ export class StiMain {
   protected componentWillLoad(): void {
     this.dark = chrome && chrome.devtools && chrome.devtools.panels && (chrome.devtools.panels as any).themeName === 'dark';
 
-    StiInjector.Instance.register(this.elementInfoChangeHandler);
+    StiInjector.Instance.register(this);
   }
 
   @autobind
-  private elementInfoChangeHandler(mapData: StiMapData): void {
-    this.mapData = mapData;
+  public changeNamespace(namespace: StiNamespaceData): void {
+    this.namespace = namespace;
+  }
+
+  @autobind
+  public changeComponent(component: StiComponentData): void {
+    this.component = component;
   }
 
   protected hostData(): JSXElements.StiMainAttributes {
@@ -49,15 +51,33 @@ export class StiMain {
     };
   }
 
-  @autobind
-  private renderGroup(group: StiGroupData): JSX.Element {
-    return (
-      <sti-group
-        group={group}
-        info={this.mapData.info}
-        dark={this.dark}
-      />
-    );
+  private renderContent(): JSX.Element | JSX.Element[] {
+    const validNamespace: boolean = this.namespace !== null;
+    const validComponent: boolean = this.component !== null;
+
+    if (!validNamespace && !validComponent) {
+      return (
+        <sti-message
+          message='Loading...'
+          dark={this.dark}
+        />
+      );
+    }
+
+    return [
+      validComponent !== null ? (
+        <sti-group
+          group={this.component}
+          dark={this.dark}
+        />
+      ) : null,
+      validNamespace !== null ? (
+        <sti-group
+          group={this.namespace}
+          dark={this.dark}
+        />
+      ) : null
+    ];
   }
 
   protected render(): null | JSX.Element[] {
@@ -68,18 +88,7 @@ export class StiMain {
           dark={this.dark}
         />
       ),
-      this.mapData.groups.length > 0 ?
-        this.mapData.groups.map(this.renderGroup) :
-          (
-            !this.mapData.info.success ?
-              (
-                <sti-message
-                  message={this.mapData.info.message}
-                  dark={this.dark}
-                />
-              ) :
-              null
-          )
+      this.renderContent()
     ];
   }
 }

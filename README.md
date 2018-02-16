@@ -67,6 +67,12 @@ You can inspect any type of data available: nodes, objects, functions, strings e
 2. Load unpacked extension in Chrome
 3. Point to the `www` folder
 
+## Screenshots
+![Screenshot 1](docs/screenshot1.jpg?raw=true "Screenshot 1")
+![Screenshot 2](docs/screenshot2.jpg?raw=true "Screenshot 2")
+![Screenshot 3](docs/screenshot3.jpg?raw=true "Screenshot 3")
+![Screenshot 4](docs/screenshot4.jpg?raw=true "Screenshot 4")
+
 ## Credits
 
 * [Aurelia Inspector](https://github.com/aurelia/inspector)

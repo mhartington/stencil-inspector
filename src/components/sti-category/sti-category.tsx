@@ -6,17 +6,18 @@ import {
 
 import autobind from '~decorators/autobind';
 import {
-  StiGroupData
+  StiCategoryData,
+  StiItemData
 } from '~helpers/interfaces';
 
 @Component({
-  tag: 'sti-group',
-  styleUrl: 'sti-group.pcss',
+  tag: 'sti-category',
+  styleUrl: 'sti-category.pcss',
   shadow: true
 })
-export class StiGroup {
+export class StiCategory {
   @Prop()
-  public group: StiGroupData = null;
+  public category: StiCategoryData = null;
 
   @Prop()
   public dark: boolean = false;
@@ -24,7 +25,11 @@ export class StiGroup {
   @State()
   private expanded: boolean = true;
 
-  protected hostData(): JSXElements.StiGroupAttributes {
+  protected componentWillLoad(): void {
+    this.expanded = this.category.expanded;
+  }
+
+  protected hostData(): JSXElements.StiCategoryAttributes {
     return {
       class: {
         expanded: this.expanded,
@@ -39,11 +44,11 @@ export class StiGroup {
   }
 
   @autobind
-  private renderChild(category: string): JSX.Element {
+  private renderChild(item: StiItemData): JSX.Element {
     return (
-      <sti-category
-        category={this.group.categories[category]}
-        class='category'
+      <sti-item
+        item={item}
+        class='item'
         dark={this.dark}
       />
     );
@@ -54,35 +59,22 @@ export class StiGroup {
       return null;
     }
 
-    const {
-      success,
-      message
-    } = this.group.status;
-
-    let actualMessage: string = '';
-    const itemsKeys: string[] = Object.keys(this.group.categories || {});
-
-    if (!success) {
-      actualMessage = message || 'Unknown Error';
-    } else if (itemsKeys.length === 0) {
-      actualMessage = `${this.group.label} has no items`;
-    }
+    const actualMessage: string = this.category.items.length === 0 ? `${this.category.label} has no entries` : '';
 
     return actualMessage ?
       (
         <sti-message
           message={actualMessage}
-          class='message'
           dark={this.dark}
         />
       ) :
-      itemsKeys.map(this.renderChild);
+      this.category.items.map(this.renderChild);
   }
 
-  protected render(): JSX.Element[] {
+  protected render(): JSX.Element | JSX.Element[] {
     return [
       (
-        <h2
+        <h3
           class='header'
           onClick={this.headerClickHandler}
         >
@@ -91,10 +83,9 @@ export class StiGroup {
             direction={this.expanded}
           />
           <div class='label'>
-            {this.group.label}
+            {this.category.label}
           </div>
-          <sti-refresh />
-        </h2>
+        </h3>
       ),
       this.renderChildList()
     ];

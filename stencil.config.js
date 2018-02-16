@@ -24,7 +24,7 @@ exports.config = {
     },
   },
   plugins: [
-    require('./plugins/postcss')({
+    require('@stencil/postcss')({
       plugins: [
         require('postcss-url')(),
         require('postcss-cssnext')(),
