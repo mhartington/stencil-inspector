@@ -549,7 +549,7 @@ export const createScout: (overwrite: boolean) => void = (overwrite: boolean): v
           try {
             response = JSON.stringify(parseItemsFromObject(value));
           } catch (e) {
-            response = '{}';
+            response = '[]';
           }
 
           return response;

@@ -11,15 +11,24 @@ import {
 import {
   createScout
 } from './scout';
+import TabChangeInfo = chrome.tabs.TabChangeInfo;
 
 export class StiInjector {
   private static _instance: StiInjector;
 
   private mainInstances: any[] = [];
 
+  private tabId: number = null;
+
   private constructor() {
     if (chrome && chrome.devtools) {
       this.injectScout(true);
+
+      chrome.tabs.getCurrent((tab: chrome.tabs.Tab) => {
+        if (tab.id) {
+          this.tabId = tab.id;
+        }
+      });
     }
   }
 
@@ -28,15 +37,18 @@ export class StiInjector {
   }
 
   @autobind
+  private scoutInjectHandler(): void {
+    this.getNamespace();
+
+    chrome.devtools.panels.elements.onSelectionChanged.addListener(this.getComponent);
+    chrome.tabs.onUpdated.addListener(this.networkNavigateHandler);
+  }
+
+  @autobind
   private injectScout(overwrite: boolean = true): void {
     chrome.devtools.inspectedWindow.eval(
       `(${createScout.toString()})(${overwrite.toString()})`,
-      () => {
-        this.getNamespace();
-
-        chrome.devtools.panels.elements.onSelectionChanged.addListener(this.getComponent);
-        chrome.devtools.network.onNavigated.addListener(this.networkNavigateHandler);
-      }
+      this.scoutInjectHandler
     );
   }
 
@@ -87,10 +99,10 @@ export class StiInjector {
   }
 
   @autobind
-  private networkNavigateHandler(): void {
-    chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
-
-    this.injectScout(true);
+  private networkNavigateHandler(currentTabId: number, changeInfo: TabChangeInfo): void {
+    if (currentTabId === this.tabId && changeInfo.status === 'complete') {
+      this.injectScout(true);
+    }
   }
 
   public register(mainInstance: any): void {
@@ -135,8 +147,6 @@ export class StiInjector {
   }
 
   public refresh(): void {
-    chrome.devtools.network.onNavigated.removeListener(this.networkNavigateHandler);
-
     this.injectScout(true);
   }
 }
